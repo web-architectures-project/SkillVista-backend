@@ -4,6 +4,6 @@ on:
 
 jobs:
   Explore-GitHub-Actions:
-    runs-on: skillvista-runner-set
+    runs-on: self-hosted
     steps:
     - run: echo "Testing runners!"
