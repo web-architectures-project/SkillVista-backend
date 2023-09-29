@@ -1,0 +1,9 @@
+name: Actions Runner Controller Test
+on:
+  workflow_dispatch:
+
+jobs:
+  Actions-Setup-Test:
+    runs-on: self-hosted
+    steps:
+    - run: echo "Linkage successful!"
