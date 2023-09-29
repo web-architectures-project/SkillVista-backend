@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Explore-GitHub-Actions:
+  Actions-Setup-Test:
     runs-on: self-hosted
     steps:
-    - run: echo "Testing runners!"
+    - run: echo "Linkage successful!"
