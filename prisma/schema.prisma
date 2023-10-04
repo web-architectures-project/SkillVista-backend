@@ -11,33 +11,31 @@ datasource db {
 }
 
 model User {
-  user_id             Int       @id @default(autoincrement())
-  username            String
-  password            String
-  email               String
-  date_created        DateTime
-  last_login          DateTime?
-  user_type           UserType
-  Profile             Profile?
-  Review              Review?
-  Service             Service?
-  providerProvider_id Int?
-  Contact             Contact?
+  user_id      Int       @id @default(autoincrement())
+  username     String
+  password     String
+  email        String
+  date_created DateTime
+  last_login   DateTime?
+  user_type    UserType
+  Profile      Profile?
+  Review       Review?
+  Service      Service?
+  Contact      Contact?
 }
 
-// Provide prefixes for user_id 
-
-// model Provider {
-//   provider_id  Int       @id @default(autoincrement())
-//   username     String
-//   password     String
-//   email        String
-//   date_created DateTime
-//   last_login   DateTime?
-//   user_type    UserType
-//   profile      Profile?  @relation(fields: [profile_id], references: [profile_id])
-//   profile_id   Int?
-// }
+model Provider {
+  provider_id  Int       @id @default(autoincrement())
+  username     String
+  password     String
+  email        String
+  date_created DateTime
+  last_login   DateTime?
+  user_type    UserType
+  profile      Profile?  @relation(fields: [profile_id], references: [profile_id])
+  profile_id   Int?
+  Contact      Contact?
+}
 
 enum UserType {
   user
@@ -45,8 +43,8 @@ enum UserType {
 }
 
 model Profile {
-  profile_id          Int     @id @default(autoincrement())
-  user_id             Int     @unique
+  profile_id          Int        @id @default(autoincrement())
+  user_id             Int        @unique
   first_name          String
   last_name           String
   phone_number        String
@@ -56,7 +54,8 @@ model Profile {
   Eircode             String
   profile_picture_url String?
   bio                 String?
-  user                User    @relation(fields: [user_id], references: [user_id])
+  user                User       @relation(fields: [user_id], references: [user_id])
+  Provider            Provider[]
 }
 
 model Service {
@@ -67,19 +66,16 @@ model Service {
   pricing      Float    @map("pricing")
   availability String   @map("availability")
   date_created DateTime @map("date_created")
-
-  // Define foreign key relationships
-  provider User    @relation(fields: [provider_id], references: [user_id])
-  Review   Review?
+  provider     User     @relation(fields: [provider_id], references: [user_id])
+  Review       Review?
 }
 
 model Contact {
-  contact_id          Int  @id @unique
-  user_id             Int  @unique
-  user                User @relation(fields: [user_id], references: [user_id])
-  provider            User @relation(fields: [provider_id], references: [user_id])
-  provider_id         Int  @unique
-  providerProvider_id Int?
+  contact_id  Int      @id @unique
+  user_id     Int      @unique
+  provider_id Int      @unique
+  user        User     @relation(fields: [user_id], references: [user_id])
+  provider    Provider @relation(fields: [provider_id], references: [provider_id])
 }
 
 model Review {
@@ -89,11 +85,8 @@ model Review {
   rating      Float
   comment     String?
   date_posted DateTime
-
-  // Define foreign key relationships
-  service             Service @relation(fields: [service_id], references: [service_id])
-  reviewer            User    @relation(fields: [reviewer_id], references: [user_id])
-  providerProvider_id Int?
+  service     Service  @relation(fields: [service_id], references: [service_id])
+  reviewer    User     @relation(fields: [reviewer_id], references: [user_id])
 }
 
 model ServiceType {
