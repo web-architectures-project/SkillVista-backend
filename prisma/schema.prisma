@@ -26,16 +26,17 @@ model User {
 }
 
 model Provider {
-  provider_id  Int       @id @default(autoincrement())
-  username     String
-  password     String
-  email        String
-  date_created DateTime
-  last_login   DateTime?
-  user_type    UserType
-  profile      Profile?  @relation(fields: [profile_id], references: [profile_id])
-  profile_id   Int?
-  Contact      Contact?
+  provider_id       Int       @id @default(autoincrement())
+  username          String
+  password          String
+  email             String
+  date_created      DateTime
+  last_login        DateTime?
+  user_type         UserType
+  profile           Profile?  @relation(fields: [profile_id], references: [profile_id])
+  profile_id        Int?
+  Contact           Contact?  @relation(fields: [contactContact_id], references: [contact_id])
+  contactContact_id Int?
 }
 
 enum UserType {
@@ -59,24 +60,34 @@ model Profile {
   Provider            Provider[]
 }
 
+model ServiceCategory {
+  service_category_id Int       @id @default(autoincrement())
+  service_name        String
+  description         String?
+  Service             Service[]
+}
+
 model Service {
-  service_id   Int      @id @default(autoincrement())
-  provider_id  Int      @unique
-  service_type String   @unique @map("service_type")
-  description  String   @map("description")
-  pricing      Float    @map("pricing")
-  availability String   @map("availability")
-  date_created DateTime @map("date_created")
-  provider     User     @relation(fields: [provider_id], references: [user_id])
-  Review       Review?
+  service_id       Int             @id @default(autoincrement())
+  provider_id      Int             @unique
+  service_type_id  Int
+  service_category ServiceCategory @relation(fields: [service_type_id], references: [service_category_id])
+  description      String          @map("description")
+  pricing          Float           @map("pricing")
+  availability     String          @map("availability")
+  date_created     DateTime        @map("date_created")
+  provider         User            @relation(fields: [provider_id], references: [user_id])
+  Review           Review?
+  Contact          Contact?
 }
 
 model Contact {
-  contact_id  Int      @id @unique
-  user_id     Int      @unique
-  provider_id Int      @unique
-  user        User     @relation(fields: [user_id], references: [user_id])
-  provider    Provider @relation(fields: [provider_id], references: [provider_id])
+  contact_id Int        @id @unique
+  user_id    Int        @unique
+  service_id Int        @unique
+  Service    Service    @relation(fields: [service_id], references: [service_id])
+  user       User       @relation(fields: [user_id], references: [user_id])
+  Provider   Provider[]
 }
 
 model Review {
@@ -88,10 +99,4 @@ model Review {
   date_posted DateTime
   service     Service  @relation(fields: [service_id], references: [service_id])
   reviewer    User     @relation(fields: [reviewer_id], references: [user_id])
-}
-
-model ServiceType {
-  type_id     Int     @id @default(autoincrement())
-  type_name   String
-  description String?
 }
