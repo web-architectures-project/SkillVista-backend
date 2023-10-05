@@ -27,6 +27,7 @@ lerna-debug.log*
 *.launch
 .settings/
 *.sublime-workspace
+language-server-log.txt
 
 # IDE - VSCode
 .vscode/*
