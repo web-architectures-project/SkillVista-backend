@@ -1,4 +1,4 @@
-# Database Installation
+# Installation
 
 1. Make sure Docker is installed
 
@@ -6,12 +6,12 @@
 
 3. Run the following command to build the container:
 
-    ```shell
+    ``` shell
     docker build -t skillvista_db .
     ```
 
-4. Run the following command to run the server
+4. Run the following command to run the server:
 
-    ```shell
+    ``` shell
     docker run -d --name skillvista_db -p 3306:3306 skillvista_db
     ```
