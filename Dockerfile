@@ -25,5 +25,5 @@ RUN npm prune --production
 EXPOSE 3001 3306
 
 # Deploy Prisma db and start the app
-CMD sh -c "npx prisma db push && npm run start:prod"
+CMD sh -c "sleep 10 && npx prisma db push && npm run start:prod"
 
