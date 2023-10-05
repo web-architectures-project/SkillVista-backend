@@ -1,4 +1,4 @@
-# Project Name
+# SKillVista Backend
 
 This is the backend for SkillVista, a project built to connect users to service providers.
 
