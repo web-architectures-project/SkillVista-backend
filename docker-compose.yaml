@@ -1,0 +1,30 @@
+version: '1'
+
+services:
+  mysql-server:
+    build:
+      context: ./database
+      dockerfile: Dockerfile 
+    environment:
+      MYSQL_ROOT_PASSWORD: skillvista
+      MYSQL_DATABASE: skillvista_db
+      MYSQL_USER: skillvista
+      MYSQL_PASSWORD: skillvista
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  nest-app:
+    build:
+      context: /
+      dockerfile: Dockerfile 
+    ports:
+      - "3001:3001" 
+    environment:
+      DATABASE_URL: mysql://skillvista:skillvista@mysql-server:3306/skillvista_db
+    depends_on:
+      - mysql-server
+
+volumes:
+  mysql-data:
