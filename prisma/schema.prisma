@@ -16,9 +16,9 @@ model User {
   username     String
   password     String
   email        String
-  date_created DateTime
-  last_login   DateTime?
-  user_type    UserType
+  date_created DateTime  @default(now()) @map(name: "created_at")
+  last_login   DateTime? @updatedAt @map(name: "updated_at")
+  user_type    UserType @default(user)
   Profile      Profile?
   Review       Review?
   Service      Service?
