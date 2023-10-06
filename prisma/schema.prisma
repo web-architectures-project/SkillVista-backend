@@ -27,9 +27,6 @@ model User {
 
 model Provider {
   provider_id       Int       @id @default(autoincrement())
-  username          String
-  password          String
-  email             String
   date_created      DateTime
   last_login        DateTime?
   user_type         UserType
