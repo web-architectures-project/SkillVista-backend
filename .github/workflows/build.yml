@@ -1,7 +1,6 @@
 name: Build SkilVista Backend
 on:
-  push:
-    branches: ['main']
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -9,7 +8,7 @@ env:
 
 jobs:
   build-and-push-image:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     permissions:
       contents: read
