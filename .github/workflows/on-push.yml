@@ -12,7 +12,7 @@ env:
 
 jobs:
   build-and-push-image:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read
@@ -41,3 +41,14 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  cleanup-old-images:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup old packages
+        uses: actions/delete-package-versions@v4
+        with: 
+          package-name: 'skillvista-backend'
+          package-type: 'container'
+          min-versions-to-keep: 1
