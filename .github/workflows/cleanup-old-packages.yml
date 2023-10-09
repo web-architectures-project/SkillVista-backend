@@ -1,0 +1,28 @@
+name: Cleanup Old Packages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup old packages
+        run: |
+          # Fetch all packages for the repo
+          packages=$(curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/packages")
+
+          # Extract package ids and created dates, then sort by date
+          old_packages=$(echo "$packages" | jq -r '.[] | "\(.created_at) \(.id)"' | sort | head -n -1 | awk '{print $2}')
+
+          # Delete all but the most recent package
+          for package_id in $old_packages; do
+            curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/packages/container/package-name/versions/$package_id"
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
