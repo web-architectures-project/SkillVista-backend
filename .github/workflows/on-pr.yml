@@ -2,6 +2,10 @@ name: Run Jest CI Tests
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
   workflow_dispatch:
 
 jobs:
