@@ -1,4 +1,4 @@
-name: Run Nest.js Tests with MySQL
+name: Run Jest CI Tests
 
 on:
   pull_request:
