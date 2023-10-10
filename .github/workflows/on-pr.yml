@@ -1,0 +1,36 @@
+name: Run Nest.js Tests with MySQL
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: skillvista
+          MYSQL_DATABASE: skillvista_db
+          MYSQL_USER: skillvista
+          MYSQL_PASSWORD: skillvista
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Push database schema
+        run: npx prisma db push
+
+      - name: Run tests
+        run: npm test
