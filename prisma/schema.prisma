@@ -3,9 +3,97 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id      Int       @id @default(autoincrement())
+  username     String
+  password     String
+  email        String
+  date_created DateTime  @default(now()) @map(name: "created_at")
+  last_login   DateTime? @updatedAt @map(name: "updated_at")
+  user_type    UserType @default(user)
+  Profile      Profile?
+  Review       Review?
+  Service      Service?
+  Contact      Contact?
+}
+
+model Provider {
+  provider_id       Int       @id @default(autoincrement())
+  date_created      DateTime
+  last_login        DateTime?
+  user_type         UserType
+  profile           Profile?  @relation(fields: [profile_id], references: [profile_id])
+  profile_id        Int?
+  Contact           Contact?  @relation(fields: [contactContact_id], references: [contact_id])
+  contactContact_id Int?
+}
+
+enum UserType {
+  user
+  service_provider
+}
+
+model Profile {
+  profile_id          Int        @id @default(autoincrement())
+  user_id             Int        @unique
+  first_name          String
+  last_name           String
+  phone_number        String
+  address             String
+  city                String
+  county              String
+  Eircode             String
+  profile_picture_url String?
+  bio                 String?
+  user                User       @relation(fields: [user_id], references: [user_id])
+  Provider            Provider[]
+}
+
+model ServiceCategory {
+  service_category_id Int       @id @default(autoincrement())
+  service_name        String
+  description         String?
+  Service             Service[]
+}
+
+model Service {
+  service_id       Int             @id @default(autoincrement())
+  provider_id      Int             @unique
+  service_type_id  Int
+  service_category ServiceCategory @relation(fields: [service_type_id], references: [service_category_id])
+  description      String          @map("description")
+  pricing          Float           @map("pricing")
+  availability     String          @map("availability")
+  date_created     DateTime        @map("date_created")
+  provider         User            @relation(fields: [provider_id], references: [user_id])
+  Review           Review?
+  Contact          Contact?
+}
+
+model Contact {
+  contact_id Int        @id @unique
+  user_id    Int        @unique
+  service_id Int        @unique
+  Service    Service    @relation(fields: [service_id], references: [service_id])
+  user       User       @relation(fields: [user_id], references: [user_id])
+  Provider   Provider[]
+}
+
+model Review {
+  review_id   Int      @id @default(autoincrement())
+  service_id  Int      @unique @map("service_id")
+  reviewer_id Int      @unique @map("reviewer_id")
+  rating      Float
+  comment     String?
+  date_posted DateTime
+  service     Service  @relation(fields: [service_id], references: [service_id])
+  reviewer    User     @relation(fields: [reviewer_id], references: [user_id])
 }
