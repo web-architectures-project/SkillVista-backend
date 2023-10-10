@@ -25,8 +25,16 @@ npm run nest start
 Or for development.
 
 ```shell
+npx prisma db push
+```
+
+and
+
+```shell
 npm start:dev
 ```
+
+Note: The [database](database/) must be running for the backend to work.
 
 Look at [package.json](package.json) for more running options.
 
