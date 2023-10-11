@@ -2,14 +2,11 @@ import { HttpException, HttpStatus, Injectable, Res } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { JwtService } from '@nestjs/jwt';
-import { LoginUserDto } from './dto/login-user.dto';
-import { encodePassword, decodePassword } from 'src/utils/bcrypt';
-import { compareSync } from 'bcrypt';
+import { encodePassword, decodePassword } from '../utils/bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(public prisma: PrismaService) {}
 
   // Register API
   // This method is used to create a new user.
