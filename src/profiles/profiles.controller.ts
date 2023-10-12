@@ -54,7 +54,6 @@ export class ProfilesController {
 
   @Put(':id')
   @ApiParam({ name: 'id', description: 'Profile ID' })
-  @UsePipes(new ValidationPipe())
   @ApiOperation({ summary: 'Update a profile by ID' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully.' })
   @ApiResponse({
