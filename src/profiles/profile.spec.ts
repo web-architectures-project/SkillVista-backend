@@ -136,9 +136,7 @@ describe('ProfilesService', () => {
         );
 
         await expect(service.findOne(1)).rejects.toThrow(
-          new InternalServerErrorException(
-            'Error fetching profile: Internal error',
-          ),
+          new InternalServerErrorException('Internal error'),
         );
       });
     });
@@ -158,9 +156,7 @@ describe('ProfilesService', () => {
             Eircode: '12345',
           }),
         ).rejects.toThrow(
-          new NotFoundException(
-            `Error updating profile: Profile with ID 1 not found.`,
-          ),
+          new NotFoundException(`Profile with ID 1 not found.`),
         );
       });
 
