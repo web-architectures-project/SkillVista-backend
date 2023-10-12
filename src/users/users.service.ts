@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { encodePassword, decodePassword } from '../utils/bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -44,27 +45,36 @@ export class UsersService {
   // Login API
   // This method is used to authenticate a user with their email and password.
 
-  async loginWithUsernameAndPassword(request, response) {
-    const { query } = request;
+  async loginWithUsernameAndPassword(data: LoginUserDto) {
+    const { email, password } = data;
 
     // Find a user with the provided email.
     const user = await this.prisma.user.findFirst({
       where: {
-        email: query?.email,
+        email: email,
       },
     });
 
     if (user) {
       // Decode and compare the provided password with the stored hashed password.
-      const matched = decodePassword(query?.password, user?.password);
-
+      const matched = decodePassword(password, user?.password);
       if (matched) {
-        // If the password matches, send a success response.
-        response.status(HttpStatus.OK).send('Login Successful');
+        return {
+          statusCode: 200,
+          message: 'login successful',
+        };
       } else {
         // If the password doesn't match, send a forbidden response.
-        response.status(HttpStatus.FORBIDDEN).send('Wrong Password');
+        return {
+          statusCode: 403,
+          message: 'Wrong Password',
+        };
       }
+    } else {
+      return {
+        statusCode: 400,
+        message: 'user not found',
+      };
     }
   }
 
