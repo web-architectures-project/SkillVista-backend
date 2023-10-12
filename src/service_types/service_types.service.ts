@@ -5,25 +5,35 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ServiceTypesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   create(createServiceTypeDto: CreateServiceTypeDto) {
-    return 'This action adds a new serviceType';
+    return this.prisma.serviceCategory.create({
+      data: createServiceTypeDto,
+    });
   }
 
   findAll() {
-    return `This action returns all serviceTypes`;
+    return this.prisma.serviceCategory.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} serviceType`;
+    const serviceType = this.prisma.serviceCategory.findUnique({
+      where: { service_category_id: id },
+    });
+    return serviceType;
   }
 
   update(id: number, updateServiceTypeDto: UpdateServiceTypeDto) {
-    return `This action updates a #${id} serviceType`;
+    return this.prisma.serviceCategory.update({
+      where: { service_category_id: id },
+      data: updateServiceTypeDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} serviceType`;
+    return this.prisma.serviceCategory.delete({
+      where: { service_category_id: id },
+    });
   }
 }
