@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -12,17 +12,18 @@ datasource db {
 }
 
 model User {
-  user_id      Int       @id @default(autoincrement())
-  username     String
-  password     String
-  email        String
-  date_created DateTime  @default(now()) @map(name: "created_at")
-  last_login   DateTime? @updatedAt @map(name: "updated_at")
-  user_type    UserType @default(user)
-  Profile      Profile?
-  Review       Review?
-  Service      Service?
-  Contact      Contact?
+  user_id           Int       @id @default(autoincrement())
+  username          String
+  password          String
+  email             String
+  date_created      DateTime  @default(now()) @map(name: "created_at")
+  last_login        DateTime? @updatedAt @map(name: "updated_at")
+  user_type         UserType  @default(user)
+  Profile           Profile?
+  Review            Review?
+  Service           Service?  @relation(fields: [serviceService_id], references: [service_id])
+  Contact           Contact?
+  serviceService_id Int?
 }
 
 model Provider {
@@ -34,6 +35,7 @@ model Provider {
   profile_id        Int?
   Contact           Contact?  @relation(fields: [contactContact_id], references: [contact_id])
   contactContact_id Int?
+  Service           Service?
 }
 
 enum UserType {
@@ -73,9 +75,10 @@ model Service {
   pricing          Float           @map("pricing")
   availability     String          @map("availability")
   date_created     DateTime        @map("date_created")
-  provider         User            @relation(fields: [provider_id], references: [user_id])
+  provider         Provider        @relation(fields: [provider_id], references: [provider_id])
   Review           Review?
   Contact          Contact?
+  User             User[]
 }
 
 model Contact {
