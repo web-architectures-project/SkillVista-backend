@@ -1,4 +1,4 @@
-name: Run Jest CI Tests
+name: On-Pr Tests
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  Mocking-Tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +24,19 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+  Linting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run linting
+        run: npm run lint
