@@ -1,0 +1,27 @@
+version: 1
+updates:
+  # NPM
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    target-branch: 'main'
+    versioning-strategy: 'increase'
+    allow:
+      - dependency-type: 'all'
+    assignees:
+      - 1Solon
+    labels:
+      - 'fix'
+
+  # Docker
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    target-branch: 'main'
+    versioning-strategy: 'increase'
+    assignees:
+      - 1Solon
+    labels:
+      - 'fix'
