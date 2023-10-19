@@ -1,5 +1,5 @@
 # Use the official MySQL image as the base image
-FROM mysql:8.0
+FROM mysql:latest
 
 # Set environment variables
 ENV MYSQL_ROOT_PASSWORD=skillvista
