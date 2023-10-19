@@ -9,19 +9,31 @@ import {
   HttpStatus,
   HttpException,
   Res,
+  HttpCode,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
+@UsePipes(new ValidationPipe())
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   // Register controllers
 
   @Post('register')
+  @ApiOperation({ summary: 'Create a new service' })
+  @ApiResponse({ status: 201, description: 'Service created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 404, description: 'Provider not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @HttpCode(201)
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     try {
       const user = await this.usersService.create(createUserDto);
@@ -44,13 +56,6 @@ export class UsersController {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
     }
-  }
-
-  // Login controllers
-
-  @Post('login')
-  loginWithUsernameAndPassword(@Body() userData: CreateUserDto) {
-    return this.usersService.loginWithUsernameAndPassword(userData);
   }
 
   @Get()
@@ -94,7 +99,7 @@ export class UsersController {
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {
     try {
-      await this.usersService.remove(+id);
+      this.usersService.remove(+id);
       return res.status(HttpStatus.NO_CONTENT).send();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
