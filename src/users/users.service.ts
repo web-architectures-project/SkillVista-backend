@@ -13,33 +13,13 @@ export class UsersService {
   // This method is used to create a new user.
 
   async create(data: CreateUserDto) {
-    // Check if the user with the same email already exists.
-    const checkUserExists = await this.prisma.user.findFirst({
-      where: {
-        email: data.email,
-      },
-    });
-
-    if (checkUserExists) {
-      // If the user already exists, throw an HTTP exception.
-      throw new HttpException('User already registered', HttpStatus.FOUND);
-    }
-
     // Hash the user's password using the encodePassword function.
     data.password = encodePassword(data?.password);
-
     // Create a new user with the provided data.
     const createUser = await this.prisma.user.create({
       data: data,
     });
-
-    if (createUser) {
-      // If the user is successfully created, return a success message.
-      return {
-        statusCode: 200,
-        message: 'Register Successful',
-      };
-    }
+    return createUser;
   }
 
   // Login API
@@ -58,41 +38,38 @@ export class UsersService {
     if (user) {
       // Decode and compare the provided password with the stored hashed password.
       const matched = decodePassword(password, user?.password);
-      if (matched) {
-        return {
-          statusCode: 200,
-          message: 'login successful',
-        };
-      } else {
-        // If the password doesn't match, send a forbidden response.
-        return {
-          statusCode: 403,
-          message: 'Wrong Password',
-        };
-      }
-    } else {
-      return {
-        statusCode: 400,
-        message: 'user not found',
-      };
+      return matched;
     }
   }
 
   // Other API Endpoints
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return this.prisma.user.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        user_id: id,
+      },
+    });
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = this.prisma.user.update({
+      where: { user_id: id },
+      data: updateUserDto,
+    });
+    return user;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    return this.prisma.user.delete({
+      where: {
+        user_id: id,
+      },
+    });
   }
 }
