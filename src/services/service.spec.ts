@@ -34,12 +34,12 @@ describe('ServicesController', () => {
   });
 
   describe('create', () => {
-    it('should create a service and return it', async () => {
+    it('should create a service and return HTTP status code 201', async () => {
       const dto = new CreateServiceDto();
-      const result = { service_id: 1, ...dto };
-      service.create.mockResolvedValue(result);
+      service.create.mockResolvedValue(201);
 
-      expect(await controller.create(dto)).toBe(result);
+      const response = await controller.create(dto);
+      expect(response).toEqual(201);
     });
   });
 
@@ -84,20 +84,16 @@ describe('ServicesController', () => {
   describe('update', () => {
     it('should update a service by ID and return the updated service', async () => {
       const dto = new UpdateServiceDto();
-      const result = { service_id: 1, ...dto };
-      service.update.mockResolvedValue(result);
+      service.update.mockResolvedValue(200);
 
-      expect(await controller.update('1', dto)).toBe(result);
+      expect(await controller.update('1', dto)).toEqual(200);
     });
   });
 
   describe('remove', () => {
-    it('should delete a service by ID', async () => {
-      const dto = new UpdateServiceDto();
-      const result = { service_id: 1, ...dto };
-      service.remove.mockResolvedValue(result);
-
-      expect(await controller.remove('1')).toBe(result);
+    it('should delete a service by ID and return the deleted service', async () => {
+      service.remove.mockResolvedValue(200);
+      expect(await controller.remove('1')).toEqual(200);
     });
   });
 });
