@@ -13,9 +13,9 @@ datasource db {
 
 model User {
   user_id           Int       @id @default(autoincrement())
-  username          String
+  username          String    @unique
   password          String
-  email             String
+  email             String    @unique
   date_created      DateTime  @default(now()) @map(name: "created_at")
   last_login        DateTime? @updatedAt @map(name: "updated_at")
   user_type         UserType  @default(user)
@@ -27,14 +27,17 @@ model User {
 }
 
 model Provider {
-  provider_id       Int       @id @default(autoincrement())
-  date_created      DateTime
-  last_login        DateTime?
-  user_type         UserType
-  profile           Profile?  @relation(fields: [profile_id], references: [profile_id])
+  provider_id       Int         @id @default(autoincrement())
+  username          String      @unique
+  password          String
+  email             String      @unique
+  date_created      DateTime    @default(now())   
+  last_login        DateTime    @default(now()) 
+  user_type         UserType    @default(service_provider)
+  profile           Profile?    @relation(fields: [profile_id], references: [profile_id])
   profile_id        Int?
-  Contact           Contact?  @relation(fields: [contactContact_id], references: [contact_id])
-  contactContact_id Int?
+  Contact           Contact?    @relation(fields: [contact_id], references: [contact_id])
+  contact_id        Int?
   Service           Service?
 }
 
@@ -48,11 +51,11 @@ model Profile {
   user_id             Int        @unique
   first_name          String
   last_name           String
-  phone_number        String
+  phone_number        String     @unique
   address             String
   city                String
   county              String
-  Eircode             String
+  Eircode             String     @unique
   profile_picture_url String?
   bio                 String?
   user                User       @relation(fields: [user_id], references: [user_id])
@@ -74,7 +77,7 @@ model Service {
   description      String          @map("description")
   pricing          Float           @map("pricing")
   availability     String          @map("availability")
-  date_created     DateTime        @map("date_created")
+  date_created     DateTime        @default(now()) @map("date_created")
   provider         Provider        @relation(fields: [provider_id], references: [provider_id])
   Review           Review?
   Contact          Contact?
@@ -82,12 +85,14 @@ model Service {
 }
 
 model Contact {
-  contact_id Int        @id @unique
+  contact_id Int        @id @default(autoincrement())
   user_id    Int        @unique
   service_id Int        @unique
   Service    Service    @relation(fields: [service_id], references: [service_id])
   user       User       @relation(fields: [user_id], references: [user_id])
   Provider   Provider[]
+  message_content String
+  date_sent DateTime    @default(now()) @map(name: "created_at")
 }
 
 model Review {
