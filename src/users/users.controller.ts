@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Body,
   Param,
   Delete,
@@ -23,15 +23,15 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('users')
 @UsePipes(new ValidationPipe())
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   // Register controllers
 
   @Post('register')
-  @ApiOperation({ summary: 'Create a new service' })
-  @ApiResponse({ status: 201, description: 'Service created successfully' })
+  @ApiOperation({ summary: 'Create a new User' })
+  @ApiResponse({ status: 201, description: 'User create succesfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 404, description: 'Provider not found' })
+  @ApiResponse({ status: 404, description: 'Not Found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @HttpCode(201)
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
@@ -43,7 +43,14 @@ export class UsersController {
     }
   }
 
+
+  
   @Post('login')
+  @ApiOperation({ summary: 'Login' })
+  @ApiResponse({ status: 201, description: 'User logged in succesfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
   async loginWithUsernameAndPassword(
     @Body() userData: CreateUserDto,
     @Res() res: Response,
@@ -58,10 +65,16 @@ export class UsersController {
     }
   }
 
+
   @Get()
+  @ApiOperation({ summary: 'Find all users' })
+  @ApiResponse({ status: 201, description: 'User data returned Successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 404, description: 'user not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
   async findAll(@Res() res: Response) {
     try {
-      const users = await this.usersService.findAll();
+      const users = this.usersService.findAll();
       return res.status(HttpStatus.OK).json(users);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -69,6 +82,11 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a single user' })
+  @ApiResponse({ status: 201, description: 'User returned successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
       const user = await this.usersService.findOne(+id);
@@ -82,14 +100,19 @@ export class UsersController {
     }
   }
 
-  @Patch(':id')
+  @Put(':id')
+  @ApiOperation({ summary: 'Update the user' })
+  @ApiResponse({ status: 201, description: 'User updated succesfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @Res() res: Response,
   ) {
     try {
-      const updatedUser = await this.usersService.update(+id, updateUserDto);
+      const updatedUser = this.usersService.update(+id, updateUserDto);
       return res.status(HttpStatus.OK).json(updatedUser);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -97,6 +120,11 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a user' })
+  @ApiResponse({ status: 201, description: 'User deleted successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
   async remove(@Param('id') id: string, @Res() res: Response) {
     try {
       this.usersService.remove(+id);
