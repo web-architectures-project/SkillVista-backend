@@ -22,7 +22,7 @@ model User {
   Profile           Profile?
   Review            Review?
   Service           Service?  @relation(fields: [serviceService_id], references: [service_id])
-  Contact           Contact?
+  Contact           Contact[]
   serviceService_id Int?
 }
 
@@ -36,7 +36,7 @@ model Provider {
   user_type         UserType    @default(service_provider)
   profile           Profile?    @relation(fields: [profile_id], references: [profile_id])
   profile_id        Int?
-  Contact           Contact?   
+  Contact           Contact[]  
   contact_id        Int?
   Service           Service?
 }
@@ -85,11 +85,11 @@ model Service {
 
 model Contact {
   contact_id      Int       @id @default(autoincrement())
-  user_id         Int       @unique
-  provider_id     Int       @unique
-  User            User      @relation(fields: [user_id], references: [user_id])
+  user_id         Int       
+  provider_id     Int       
+  user            User      @relation(fields: [user_id], references: [user_id])
   who             UserType
-  Provider        Provider  @relation(fields: [provider_id], references: [provider_id])
+  provider        Provider  @relation(fields: [provider_id], references: [provider_id])
   message_content String
   date_sent       DateTime   @default(now()) @map(name: "created_at")
 }
