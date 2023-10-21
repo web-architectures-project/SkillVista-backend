@@ -37,10 +37,9 @@ describe('ReviewsController', () => {
   describe('create', () => {
     it('should create a review and return it', async () => {
       const dto = new CreateReviewDto();
-      const result = { review_id: 1, ...dto };
-      service.create.mockResolvedValue(result);
+      service.create.mockResolvedValue(201);
 
-      expect(await controller.create(dto)).toBe(result);
+      expect(await controller.create(dto)).toBe(201);
     });
   });
 
@@ -76,20 +75,17 @@ describe('ReviewsController', () => {
   describe('update', () => {
     it('should update a review by ID and return the updated review', async () => {
       const dto = new UpdateReviewDto();
-      const result = { review_id: 1, ...dto };
-      service.update.mockResolvedValue(result);
+      service.update.mockResolvedValue(200);
 
-      expect(await controller.update('1', dto)).toBe(result);
+      expect(await controller.update('1', dto)).toBe(200);
     });
   });
 
   describe('remove', () => {
     it('should delete a service by ID', async () => {
-      const dto = new UpdateReviewDto();
-      const result = { review_id: 1, ...dto };
-      service.remove.mockResolvedValue(result);
+      service.remove.mockResolvedValue(200);
 
-      expect(await controller.remove('1')).toBe(result);
+      expect(await controller.remove('1')).toBe(200);
     });
   });
 });

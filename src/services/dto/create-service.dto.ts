@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsDate,
   IsInt,
   IsNotEmpty,
   IsString,
-  Matches,
+  Min,
+  Max,
   MaxLength,
 } from 'class-validator';
 
@@ -28,9 +30,8 @@ export class CreateServiceDto {
   @ApiProperty({ required: true })
   @IsInt()
   @IsNotEmpty()
-  @Matches(/^\d{0,8}(\.\d{1,4})?$/, {
-    message: 'Invalid price',
-  })
+  @Min(0)
+  @Max(1000000)
   pricing: number;
 
   @ApiProperty({ required: true })
@@ -42,5 +43,6 @@ export class CreateServiceDto {
   @ApiProperty({ required: true })
   @IsDate()
   @IsNotEmpty()
+  @Transform(({ value }) => new Date(value))
   date_created: Date;
 }
