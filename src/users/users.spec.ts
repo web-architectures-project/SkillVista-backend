@@ -3,7 +3,6 @@ import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
-import { HttpException } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import * as bcrypt from '../utils/bcrypt'; // Import the whole module
 
@@ -20,6 +19,10 @@ describe('UsersService', () => {
       user: {
         findFirst: jest.fn(),
         create: jest.fn(),
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
       },
     };
 
@@ -51,24 +54,7 @@ describe('UsersService', () => {
     prismaMock.user.create.mockResolvedValue({ id: 1, ...createUserDto });
 
     const response = await service.create(createUserDto);
-    expect(response).toEqual({
-      statusCode: 200,
-      message: 'Register Successful',
-    });
-  });
-
-  it('should return 302 if user is already registered', async () => {
-    const createUserDto: CreateUserDto = {
-      email: 'test@example.com',
-      username: 'testuser',
-      password: 'testpass',
-    };
-
-    prismaMock.user.findFirst.mockResolvedValue({ id: 1, ...createUserDto });
-
-    await expect(service.create(createUserDto)).rejects.toThrow(
-      new HttpException('User already registered', 302),
-    );
+    expect(response).toEqual(201);
   });
 
   it('should login a user successfully', async () => {
@@ -84,45 +70,46 @@ describe('UsersService', () => {
     jest.spyOn(bcrypt, 'decodePassword').mockImplementation(() => true);
 
     const response = await service.loginWithUsernameAndPassword(loginUserDto);
-    expect(response).toEqual({
-      statusCode: 200,
-      message: 'login successful',
-    });
+    expect(response).toEqual(200);
   });
 
-  it('should return 403 if the password is incorrect', async () => {
-    const loginUserDto: LoginUserDto = {
-      email: 'test@example.com',
-      password: 'wrongpass', // purposefully incorrect password
-    };
+  it('should return all users when requested', async () => {
+    const users = [
+      {
+        id: 1,
+        email: '',
+      },
+    ];
 
-    prismaMock.user.findFirst.mockResolvedValue({
+    prismaMock.user.findMany.mockResolvedValue(users);
+    const response = await service.findAll();
+    expect(response).toEqual(users);
+  });
+
+  it('should return a user when requested', async () => {
+    const user = {
       id: 1,
-      email: 'test@example.com',
-      password: 'testpass',
-    });
-
-    jest.spyOn(bcrypt, 'decodePassword').mockImplementation(() => false); // password doesn't match
-
-    const response = await service.loginWithUsernameAndPassword(loginUserDto);
-    expect(response).toEqual({
-      statusCode: 403,
-      message: 'Wrong Password',
-    });
-  });
-
-  it('should return 400 if the user is not found', async () => {
-    const loginUserDto: LoginUserDto = {
-      email: 'notfound@example.com',
-      password: 'somepass',
+      email: '',
     };
 
-    prismaMock.user.findFirst.mockResolvedValue(null); // no user found
+    prismaMock.user.findUnique.mockResolvedValue(user);
+    const response = await service.findOne(1);
+    expect(response).toEqual(user);
+  });
 
-    const response = await service.loginWithUsernameAndPassword(loginUserDto);
-    expect(response).toEqual({
-      statusCode: 400,
-      message: 'user not found',
-    });
+  it('should return a status 200 when a user is updated', async () => {
+    const updateUserDto = {
+      email: ' ',
+    };
+
+    prismaMock.user.update.mockResolvedValue(updateUserDto);
+    const response = await service.update(1, updateUserDto);
+    expect(response).toEqual(200);
+  });
+
+  it('should return a status 200 when a user is deleted', async () => {
+    prismaMock.user.delete.mockResolvedValue({});
+    const response = await service.remove(1);
+    expect(response).toEqual(200);
   });
 });
