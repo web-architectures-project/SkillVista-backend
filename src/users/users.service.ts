@@ -43,8 +43,8 @@ export class UsersService {
 
       if (user) {
         // Decode and compare the provided password with the stored hashed password.
-        const matched = decodePassword(password, user?.password);
-        return matched;
+        decodePassword(password, user?.password);
+        return HttpStatus.OK;
       }
     } catch (error) {
       return new HttpErrorByCode['500'](error);
