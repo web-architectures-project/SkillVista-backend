@@ -54,9 +54,8 @@ export class UsersController {
     @Res() res: Response,
   ) {
     try {
-      const token = await this.usersService.loginWithUsernameAndPassword(
-        userData,
-      );
+      const token =
+        await this.usersService.loginWithUsernameAndPassword(userData);
       return res.status(HttpStatus.OK).json({ token });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
