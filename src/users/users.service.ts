@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { encodePassword, decodePassword } from '../utils/bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 
 @Injectable()
 export class UsersService {
@@ -13,32 +14,16 @@ export class UsersService {
   // This method is used to create a new user.
 
   async create(data: CreateUserDto) {
-    // Check if the user with the same email already exists.
-    const checkUserExists = await this.prisma.user.findFirst({
-      where: {
-        email: data.email,
-      },
-    });
-
-    if (checkUserExists) {
-      // If the user already exists, throw an HTTP exception.
-      throw new HttpException('User already registered', HttpStatus.FOUND);
-    }
-
-    // Hash the user's password using the encodePassword function.
-    data.password = encodePassword(data?.password);
-
-    // Create a new user with the provided data.
-    const createUser = await this.prisma.user.create({
-      data: data,
-    });
-
-    if (createUser) {
-      // If the user is successfully created, return a success message.
-      return {
-        statusCode: 200,
-        message: 'Register Successful',
-      };
+    try {
+      // Hash the user's password using the encodePassword function.
+      data.password = encodePassword(data?.password);
+      // Create a new user with the provided data.
+      await this.prisma.user.create({
+        data: data,
+      });
+      return HttpStatus.CREATED;
+    } catch (error) {
+      return new HttpErrorByCode['500'](error);
     }
   }
 
@@ -46,53 +31,55 @@ export class UsersService {
   // This method is used to authenticate a user with their email and password.
 
   async loginWithUsernameAndPassword(data: LoginUserDto) {
-    const { email, password } = data;
+    try {
+      const { email, password } = data;
 
-    // Find a user with the provided email.
-    const user = await this.prisma.user.findFirst({
-      where: {
-        email: email,
-      },
-    });
+      // Find a user with the provided email.
+      const user = await this.prisma.user.findFirst({
+        where: {
+          email: email,
+        },
+      });
 
-    if (user) {
-      // Decode and compare the provided password with the stored hashed password.
-      const matched = decodePassword(password, user?.password);
-      if (matched) {
-        return {
-          statusCode: 200,
-          message: 'login successful',
-        };
-      } else {
-        // If the password doesn't match, send a forbidden response.
-        return {
-          statusCode: 403,
-          message: 'Wrong Password',
-        };
+      if (user) {
+        // Decode and compare the provided password with the stored hashed password.
+        decodePassword(password, user?.password);
+        return HttpStatus.OK;
       }
-    } else {
-      return {
-        statusCode: 400,
-        message: 'user not found',
-      };
+    } catch (error) {
+      return new HttpErrorByCode['500'](error);
     }
   }
 
   // Other API Endpoints
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return this.prisma.user.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        user_id: id,
+      },
+    });
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    this.prisma.user.update({
+      where: { user_id: id },
+      data: updateUserDto,
+    });
+    return HttpStatus.OK;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    this.prisma.user.delete({
+      where: {
+        user_id: id,
+      },
+    });
+    return HttpStatus.OK;
   }
 }

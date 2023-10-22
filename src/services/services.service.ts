@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -8,9 +8,20 @@ export class ServicesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createServiceDto: CreateServiceDto) {
-    return this.prisma.service.create({
-      data: createServiceDto,
-    });
+    try {
+      this.prisma.service.create({
+        data: createServiceDto,
+      });
+      return HttpStatus.CREATED;
+    } catch (error) {
+      if (
+        error.message.includes(
+          'Foreign key constraint failed on the field: `provider_id`',
+        )
+      ) {
+        throw new NotFoundException('Provider not found');
+      }
+    }
   }
 
   async findAll() {
@@ -18,22 +29,54 @@ export class ServicesService {
   }
 
   async findOne(id: number) {
-    const service = await this.prisma.service.findUnique({
-      where: { service_id: id },
-    });
-    return service;
+    try {
+      const service = await this.prisma.service.findUnique({
+        where: { service_id: id },
+      });
+      return service;
+    } catch (error) {
+      if (
+        error.message.includes(
+          'Foreign key constraint failed on the field: `provider_id`',
+        )
+      ) {
+        throw new NotFoundException('Provider not found');
+      }
+    }
   }
 
   async update(id: number, updateServiceDto: UpdateServiceDto) {
-    return this.prisma.service.update({
-      where: { service_id: id },
-      data: updateServiceDto,
-    });
+    try {
+      this.prisma.service.update({
+        where: { service_id: id },
+        data: updateServiceDto,
+      });
+      return HttpStatus.OK;
+    } catch (error) {
+      if (
+        error.message.includes(
+          'Foreign key constraint failed on the field: `provider_id`',
+        )
+      ) {
+        throw new NotFoundException('Provider not found');
+      }
+    }
   }
 
   async remove(id: number) {
-    return this.prisma.service.delete({
-      where: { service_id: id },
-    });
+    try {
+      this.prisma.service.delete({
+        where: { service_id: id },
+      });
+      return HttpStatus.OK;
+    } catch (error) {
+      if (
+        error.message.includes(
+          'Foreign key constraint failed on the field: `provider_id`',
+        )
+      ) {
+        throw new NotFoundException('Provider not found');
+      }
+    }
   }
 }

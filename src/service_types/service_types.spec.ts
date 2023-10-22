@@ -38,10 +38,9 @@ describe('ServicesController', () => {
         description: 'Test Description',
         service_category_id: 1,
       };
-      const result = { service_category_id: 1, ...dto };
-      service.create.mockResolvedValue(result);
+      service.create.mockReturnValue(201);
 
-      expect(await controller.create(dto)).toBe(result);
+      expect(await controller.create(dto)).toBe(201);
     });
   });
 
@@ -80,23 +79,17 @@ describe('ServicesController', () => {
         service_name: 'Updated Test Service',
         description: 'Updated Test Description',
       };
-      const result = { service_category_id: 1, ...dto };
-      service.update.mockResolvedValue(result);
+      service.update.mockReturnValue(200);
 
-      expect(await controller.update('1', dto)).toBe(result);
+      expect(await controller.update('1', dto)).toBe(200);
     });
   });
 
   describe('remove', () => {
     it('should delete a service by ID', async () => {
-      const result = {
-        service_category_id: 1,
-        service_name: 'Test Service',
-        description: 'Some description',
-      };
-      service.remove.mockResolvedValue(result);
+      service.remove.mockReturnValue(200);
 
-      expect(await controller.remove('1')).toBe(result);
+      expect(await controller.remove('1')).toBe(200);
     });
   });
 });
