@@ -23,7 +23,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('users')
 @UsePipes(new ValidationPipe())
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   // Register controllers
 
@@ -43,8 +43,6 @@ export class UsersController {
     }
   }
 
-
-  
   @Post('login')
   @ApiOperation({ summary: 'Login' })
   @ApiResponse({ status: 201, description: 'User logged in succesfully' })
@@ -56,15 +54,13 @@ export class UsersController {
     @Res() res: Response,
   ) {
     try {
-      const token = await this.usersService.loginWithUsernameAndPassword(
-        userData,
-      );
+      const token =
+        await this.usersService.loginWithUsernameAndPassword(userData);
       return res.status(HttpStatus.OK).json({ token });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
     }
   }
-
 
   @Get()
   @ApiOperation({ summary: 'Find all users' })

@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { encodePassword, decodePassword } from '../utils/bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 
 @Injectable()
 export class UsersService {
@@ -13,32 +14,40 @@ export class UsersService {
   // This method is used to create a new user.
 
   async create(data: CreateUserDto) {
-    // Hash the user's password using the encodePassword function.
-    data.password = encodePassword(data?.password);
-    // Create a new user with the provided data.
-    const createUser = await this.prisma.user.create({
-      data: data,
-    });
-    return createUser;
+    try {
+      // Hash the user's password using the encodePassword function.
+      data.password = encodePassword(data?.password);
+      // Create a new user with the provided data.
+      await this.prisma.user.create({
+        data: data,
+      });
+      return HttpStatus.CREATED;
+    } catch (error) {
+      return new HttpErrorByCode['500'](error);
+    }
   }
 
   // Login API
   // This method is used to authenticate a user with their email and password.
 
   async loginWithUsernameAndPassword(data: LoginUserDto) {
-    const { email, password } = data;
+    try {
+      const { email, password } = data;
 
-    // Find a user with the provided email.
-    const user = await this.prisma.user.findFirst({
-      where: {
-        email: email,
-      },
-    });
+      // Find a user with the provided email.
+      const user = await this.prisma.user.findFirst({
+        where: {
+          email: email,
+        },
+      });
 
-    if (user) {
-      // Decode and compare the provided password with the stored hashed password.
-      const matched = decodePassword(password, user?.password);
-      return matched;
+      if (user) {
+        // Decode and compare the provided password with the stored hashed password.
+        decodePassword(password, user?.password);
+        return HttpStatus.OK;
+      }
+    } catch (error) {
+      return new HttpErrorByCode['500'](error);
     }
   }
 
@@ -58,18 +67,19 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = this.prisma.user.update({
+    this.prisma.user.update({
       where: { user_id: id },
       data: updateUserDto,
     });
-    return user;
+    return HttpStatus.OK;
   }
 
   async remove(id: number) {
-    return this.prisma.user.delete({
+    this.prisma.user.delete({
       where: {
         user_id: id,
       },
     });
+    return HttpStatus.OK;
   }
 }
