@@ -7,7 +7,7 @@ import {
 import { CreateProviderDto } from './dto/create-provider.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateProviderDto } from './dto/update-provider.dto';
-import { decodePassword, encodePassword } from 'src/utils/bcrypt';
+import { decodePassword, encodePassword } from '../utils/bcrypt';
 import { LoginProviderDto } from './dto/login-provider.dto';
 
 @Injectable()
