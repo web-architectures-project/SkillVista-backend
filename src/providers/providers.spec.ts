@@ -17,7 +17,7 @@ describe('ProviderService', () => {
 
   beforeEach(async () => {
     prismaMock = {
-      user: {
+      provider: {
         findFirst: jest.fn(),
         create: jest.fn(),
       },
@@ -40,10 +40,10 @@ describe('ProviderService', () => {
     jest.resetAllMocks(); // Reset all mocks after each test
   });
 
-  it('should create a user successfully', async () => {
+  it('should create a provider successfully', async () => {
     const createProviderDto: CreateProviderDto = {
       email: 'test@example.com',
-      username: 'testuser',
+      username: 'testprovider',
       password: 'SKillvista208!',
     };
 
@@ -60,10 +60,10 @@ describe('ProviderService', () => {
     });
   });
 
-  it('should return 302 if user is already registered', async () => {
+  it('should return 302 if provider is already registered', async () => {
     const createProviderDto: CreateProviderDto = {
       email: 'test@example.com',
-      username: 'testuser',
+      username: 'testprovider',
       password: 'SKillvista208!',
     };
 
@@ -77,13 +77,16 @@ describe('ProviderService', () => {
     );
   });
 
-  it('should login a user successfully', async () => {
+  it('should login a provider successfully', async () => {
     const createProviderDto: LoginProviderDto = {
       email: 'test@example.com',
       password: 'SKillvista208!',
     };
 
-    prismaMock.user.findFirst.mockResolvedValue({ id: 1, ...LoginProviderDto });
+    prismaMock.provider.findFirst.mockResolvedValue({
+      id: 1,
+      ...LoginProviderDto,
+    });
 
     // Mock the bcrypt module
     jest.clearAllMocks();
@@ -97,12 +100,12 @@ describe('ProviderService', () => {
   });
 
   it('should return 403 if the password is incorrect', async () => {
-    const loginUserDto: LoginProviderDto = {
+    const LoginProviderDto: LoginProviderDto = {
       email: 'test@example.com',
       password: 'SKillwerwe18!',
     };
 
-    prismaMock.user.findFirst.mockResolvedValue({
+    prismaMock.provider.findFirst.mockResolvedValue({
       id: 1,
       email: 'test@example.com',
       password: 'SKillvista208!',
@@ -110,20 +113,20 @@ describe('ProviderService', () => {
 
     jest.spyOn(bcrypt, 'decodePassword').mockImplementation(() => false);
 
-    const response = await service.login(loginUserDto);
+    const response = await service.login(LoginProviderDto);
     expect(response).toEqual({
       statusCode: 403,
-      message: 'Wrong Password',
+      message: 'wrong password',
     });
   });
 
-  it('should return 400 if the user is not found', async () => {
+  it('should return 400 if the provider is not found', async () => {
     const loginUserDto: LoginProviderDto = {
       email: 'notfound@example.com',
       password: 'SKilleeee208!',
     };
 
-    prismaMock.user.findFirst.mockResolvedValue(null);
+    prismaMock.provider.findFirst.mockResolvedValue(null);
 
     const response = await service.login(loginUserDto);
     expect(response).toEqual({
