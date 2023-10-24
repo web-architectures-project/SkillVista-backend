@@ -5,10 +5,15 @@ import { encodePassword, decodePassword } from '../utils/bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { JwtService } from '@nestjs/jwt';
+import { AuthEntity } from './user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(public prisma: PrismaService) {}
+  constructor(
+    public prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   // Register API
   // This method is used to create a new user.
@@ -30,7 +35,7 @@ export class UsersService {
   // Login API
   // This method is used to authenticate a user with their email and password.
 
-  async loginWithUsernameAndPassword(data: LoginUserDto) {
+  async loginWithUsernameAndPassword(data: LoginUserDto): Promise<AuthEntity> {
     try {
       const { email, password } = data;
 
@@ -41,13 +46,19 @@ export class UsersService {
         },
       });
 
-      if (user) {
-        // Decode and compare the provided password with the stored hashed password.
-        decodePassword(password, user?.password);
-        return HttpStatus.OK;
+      if (!user) {
+        throw new HttpErrorByCode['404']('User not found');
       }
+
+      if (!decodePassword(password, user.password)) {
+        throw new HttpErrorByCode['401']('Invalid password');
+      }
+
+      return {
+        accessToken: this.jwtService.sign({ id: user?.user_id }),
+      };
     } catch (error) {
-      return new HttpErrorByCode['500'](error);
+      throw new HttpErrorByCode['500'](error);
     }
   }
 

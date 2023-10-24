@@ -4,23 +4,22 @@ import { UsersController } from './users.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { jwt_config } from 'src/config/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
   imports: [
     PrismaModule,
-    PassportModule.register({
-      defaultStrategy: 'jwt',
-      property: 'user',
-      session: false,
-    }),
-    JwtModule.register({
-      secret: jwt_config.secret,
-      signOptions: {
-        expiresIn: jwt_config.expired,
-      },
+    PassportModule,
+    ConfigModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_TOKEN'),
+        signOptions: { expiresIn: '4h' },
+      }),
+      inject: [ConfigService],
     }),
   ],
 })

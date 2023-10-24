@@ -18,6 +18,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -45,18 +46,18 @@ export class UsersController {
 
   @Post('login')
   @ApiOperation({ summary: 'Login' })
-  @ApiResponse({ status: 201, description: 'User logged in succesfully' })
+  @ApiResponse({ status: 200, description: 'User logged in succesfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async loginWithUsernameAndPassword(
-    @Body() userData: CreateUserDto,
+    @Body() userData: LoginUserDto,
     @Res() res: Response,
   ) {
     try {
       const token =
         await this.usersService.loginWithUsernameAndPassword(userData);
-      return res.status(HttpStatus.OK).json({ token });
+      return res.status(HttpStatus.OK).json(token);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
     }
