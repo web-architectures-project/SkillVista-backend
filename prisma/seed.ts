@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { encodePassword } from '../src/utils/bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -6,7 +7,7 @@ async function main() {
   const user1 = await prisma.user.create({
     data: {
       username: 'johnDoe',
-      password: 'securePass123',
+      password: encodePassword('securePass123'),
       email: 'john.doe@email.com',
       user_type: 'user',
       Profile: {
@@ -26,7 +27,7 @@ async function main() {
   const user2 = await prisma.user.create({
     data: {
       username: 'janeDoe',
-      password: 'securePass123',
+      password: encodePassword('securePass123'),
       email: 'jane.doe@email.com',
       user_type: 'user',
       Profile: {
@@ -46,7 +47,7 @@ async function main() {
   const user3 = await prisma.user.create({
     data: {
       username: 'jimDoe',
-      password: 'securePass123',
+      password: encodePassword('securePass123'),
       email: 'jim.doe@email.com',
       user_type: 'user',
       Profile: {
@@ -66,7 +67,7 @@ async function main() {
   const provider1 = await prisma.provider.create({
     data: {
       username: 'janeProvider',
-      password: 'providerPass456',
+      password: encodePassword('providerPass456'),
       email: 'jane.provider@email.com',
       user_type: 'service_provider',
       Profile: {
@@ -86,7 +87,7 @@ async function main() {
   const provider2 = await prisma.provider.create({
     data: {
       username: 'johnProvider',
-      password: 'providerPass789',
+      password: encodePassword('providerPass789'),
       email: 'john.provider@email.com',
       user_type: 'service_provider',
       Profile: {
@@ -106,7 +107,7 @@ async function main() {
   const provider3 = await prisma.provider.create({
     data: {
       username: 'janeDoeProvider',
-      password: 'providerPass123',
+      password: encodePassword('providerPass123'),
       email: 'jane.doe.provider@email.com',
       user_type: 'service_provider',
       Profile: {
