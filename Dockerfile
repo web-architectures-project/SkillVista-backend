@@ -1,19 +1,19 @@
 FROM node:lts-alpine
 
 # Set the working directory
-WORKDIR /src
+WORKDIR /
 
 # Copy package.json and package-lock.json first for optimal caching
 COPY package*.json ./
+
+# Copy the rest of the application code
+COPY . .
 
 # Install dependencies, Nest.js CLI, and generate Prisma client
 # Combining these steps into a single RUN command reduces the number of layers
 RUN npm install && \
     npm install -g @nestjs/cli && \
     npx prisma generate
-
-# Copy the rest of the application code
-COPY . .
 
 # Build the Nest.js app
 RUN npm run build
