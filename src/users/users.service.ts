@@ -74,6 +74,11 @@ export class UsersService {
         user_id: id,
       },
     });
+
+    if (!user) {
+      throw new HttpErrorByCode['404']('User not found');
+    }
+
     return user;
   }
 
@@ -82,6 +87,11 @@ export class UsersService {
       where: { user_id: id },
       data: updateUserDto,
     });
+
+    if (!this.prisma.user) {
+      throw new HttpErrorByCode['404']('User not found');
+    }
+
     return HttpStatus.OK;
   }
 
@@ -91,6 +101,11 @@ export class UsersService {
         user_id: id,
       },
     });
+
+    if (!this.prisma.user) {
+      throw new HttpErrorByCode['404']('User not found');
+    }
+
     return HttpStatus.OK;
   }
 }
