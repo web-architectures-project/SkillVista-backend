@@ -19,8 +19,8 @@ export class ContactsService {
       throw new NotFoundException(`user ${user_id} is not found`);
     }
 
-    const provider = await this.prisma.provider.findUnique({
-      where: { provider_id: provider_id },
+    const provider = await this.prisma.user.findUnique({
+      where: { user_id: provider_id },
     });
     if (!provider) {
       throw new NotFoundException(`provider ${provider_id} is not found`);
@@ -85,8 +85,8 @@ export class ContactsService {
       throw new NotFoundException(`user ${user_id} is not found`);
     }
 
-    const provider = await this.prisma.provider.findUnique({
-      where: { provider_id: provider_id },
+    const provider = await this.prisma.user.findUnique({
+      where: { user_id: provider_id },
     });
     if (!provider) {
       throw new NotFoundException(`provider ${provider_id} is not found`);
