@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserType } from '@prisma/client';
 import {
   IsString,
   IsNotEmpty,
   IsEmail,
   IsStrongPassword,
+  IsEnum,
 } from 'class-validator';
 export class CreateUserDto {
   @ApiProperty({ required: true })
@@ -22,4 +24,9 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty({ message: 'Password Required' })
   password: string;
+
+  @ApiProperty({ required: true })
+  @IsEnum(UserType, { message: 'Invalid User Type' })
+  @IsNotEmpty({ message: 'First Name Required' })
+  userType: UserType;
 }
