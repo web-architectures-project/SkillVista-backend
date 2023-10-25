@@ -93,7 +93,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, UserOwnershipGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get a single user' })
-  @ApiResponse({ status: 201, description: 'User returned successfully' })
+  @ApiResponse({ status: 200, description: 'User returned successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
