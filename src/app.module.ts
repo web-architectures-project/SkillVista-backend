@@ -6,7 +6,6 @@ import { ServicesModule } from './services/services.module';
 import { ContactsModule } from './contacts/contacts.module';
 import { ServiceTypesModule } from './service_types/service_types.module';
 import { ReviewsModule } from './reviews/reviews.module';
-import { ProvidersModule } from './providers/providers.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -18,7 +17,6 @@ import { ConfigModule } from '@nestjs/config';
     ContactsModule,
     ServiceTypesModule,
     ReviewsModule,
-    ProvidersModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
