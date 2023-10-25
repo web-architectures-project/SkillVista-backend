@@ -7,13 +7,22 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiParam,
+} from '@nestjs/swagger';
 
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FindChatDto } from './dto/find-chat.dto';
+import { JwtAuthGuard } from 'src/users/jwt-auth.guard';
+import { LocalOnly } from 'src/utils/decorators/local-only.decorator';
 
 @ApiTags('contacts')
 @Controller('contacts')
@@ -21,6 +30,8 @@ export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new contact' })
   @ApiResponse({ status: 201, description: 'Contact created successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -32,6 +43,8 @@ export class ContactsController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Contact ID' })
   @ApiOperation({ summary: 'Update a contact by ID' })
   @ApiResponse({ status: 200, description: 'Contact updated successfully' })
@@ -43,6 +56,9 @@ export class ContactsController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @LocalOnly()
   @ApiOperation({ summary: 'Retrieve all contact' })
   @ApiResponse({ status: 200, description: 'Contact found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
@@ -51,6 +67,8 @@ export class ContactsController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Contact ID' })
   @ApiOperation({
     summary: 'Retrieve a specific contact by ID',
@@ -64,6 +82,8 @@ export class ContactsController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Retrieve a specific  chat by userID and ProviderID',
   })
@@ -76,6 +96,8 @@ export class ContactsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Contact ID' })
   @ApiOperation({ summary: 'Delete a contact by ID' })
   @ApiResponse({ status: 200, description: 'Contact deleted successfully' })

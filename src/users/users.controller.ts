@@ -26,6 +26,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { LocalOnly } from 'src/utils/decorators/local-only.decorator';
 
 @ApiTags('users')
 @Controller('users')
@@ -73,6 +74,7 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @LocalOnly()
   @ApiOperation({ summary: 'Find all users' })
   @ApiResponse({ status: 201, description: 'User data returned Successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
