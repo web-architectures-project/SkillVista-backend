@@ -33,20 +33,17 @@ export class ProfilesService {
   }
 
   async findOne(profile_id: number) {
-    try {
-      const profile = await this.prisma.profile.findUnique({
-        where: { profile_id: profile_id },
-      });
-      return profile;
-    } catch (error) {
-      if (
-        error.message.includes(
-          'Foreign key constraint failed on the field: `user_id`',
-        )
-      ) {
-        throw new NotFoundException('User not found');
-      }
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        profile_id: profile_id,
+      },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
     }
+
+    return profile;
   }
 
   async update(id: number, updateReviewDto: CreateProfileDto) {
