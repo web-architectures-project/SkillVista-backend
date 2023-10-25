@@ -8,6 +8,7 @@ async function bootstrap() {
     .setTitle('NestJS x Prisma')
     .setDescription('REST API NestJS x Prisma')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
