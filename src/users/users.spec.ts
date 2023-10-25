@@ -48,6 +48,7 @@ describe('UsersService', () => {
       email: 'test@example.com',
       username: 'testuser',
       password: 'testpass',
+      userType: 'user',
     };
 
     prismaMock.user.findFirst.mockResolvedValue(null);
