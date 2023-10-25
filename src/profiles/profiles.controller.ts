@@ -9,6 +9,8 @@ import {
   HttpCode,
   UsePipes,
   ValidationPipe,
+  HttpStatus,
+  Res,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -25,6 +27,7 @@ import { JwtAuthGuard } from '../utils/guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { LocalRequestGuard } from 'src/utils/guards/local-request.guard';
 import { UserOwnershipGuard } from 'src/utils/guards/user-ownership.guard';
+import { Response } from 'express';
 
 @ApiTags('profiles')
 @Controller('profiles')
@@ -42,7 +45,8 @@ export class ProfilesController {
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   @HttpCode(201)
   create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profilesService.create(createProfileDto);
+    this.profilesService.create(createProfileDto);
+    return HttpStatus.CREATED;
   }
 
   @Get()
@@ -51,8 +55,9 @@ export class ProfilesController {
   @ApiOperation({ summary: 'Retrieve all profiles' })
   @ApiResponse({ status: 200, description: 'Profiles found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
-  findAll() {
-    return this.profilesService.findAll();
+  async findAll(@Res() res: Response) {
+    const profiles = await this.profilesService.findAll();
+    return res.status(HttpStatus.OK).json(profiles);
   }
 
   @Get(':id')
@@ -64,8 +69,9 @@ export class ProfilesController {
   @ApiResponse({ status: 404, description: 'Profile not found.' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
-  findOne(@Param('id') id: number) {
-    return this.profilesService.findOne(id);
+  async findOne(@Param('id') id: number, @Res() res: Response) {
+    const userProfile = await this.profilesService.findOne(+id);
+    return res.status(HttpStatus.OK).json(userProfile);
   }
 
   @Put(':id')
@@ -82,7 +88,8 @@ export class ProfilesController {
   @ApiResponse({ status: 404, description: 'Profile not found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   update(@Param('id') id: number, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profilesService.update(id, updateProfileDto);
+    this.profilesService.update(id, updateProfileDto);
+    return HttpStatus.OK;
   }
 
   @Delete(':id')
@@ -94,6 +101,7 @@ export class ProfilesController {
   @ApiResponse({ status: 404, description: 'Profile not found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   remove(@Param('id') id: number) {
-    return this.profilesService.remove(id);
+    this.profilesService.remove(id);
+    return HttpStatus.OK;
   }
 }
