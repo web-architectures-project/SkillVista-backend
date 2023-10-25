@@ -21,9 +21,10 @@ import {
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ProfilesService } from './profiles.service';
-import { JwtAuthGuard } from '../users/jwt-auth.guard';
+import { JwtAuthGuard } from '../utils/guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
-import { LocalOnly } from 'src/utils/decorators/local-only.decorator';
+import { LocalRequestGuard } from 'src/utils/guards/local-request.guard';
+import { UserOwnershipGuard } from 'src/utils/guards/user-ownership.guard';
 
 @ApiTags('profiles')
 @Controller('profiles')
@@ -45,9 +46,8 @@ export class ProfilesController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
   @ApiBearerAuth()
-  @LocalOnly()
   @ApiOperation({ summary: 'Retrieve all profiles' })
   @ApiResponse({ status: 200, description: 'Profiles found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
@@ -56,7 +56,7 @@ export class ProfilesController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, UserOwnershipGuard)
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Profile ID' })
   @ApiOperation({ summary: 'Retrieve a specific profile by ID' })
@@ -69,7 +69,7 @@ export class ProfilesController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, UserOwnershipGuard)
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Profile ID' })
   @ApiOperation({ summary: 'Update a profile by ID' })
@@ -86,7 +86,7 @@ export class ProfilesController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, UserOwnershipGuard)
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Profile ID' })
   @ApiOperation({ summary: 'Delete a profile by ID' })

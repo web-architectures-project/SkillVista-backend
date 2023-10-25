@@ -21,8 +21,8 @@ import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { FindChatDto } from './dto/find-chat.dto';
-import { JwtAuthGuard } from 'src/users/jwt-auth.guard';
-import { LocalOnly } from 'src/utils/decorators/local-only.decorator';
+import { JwtAuthGuard } from 'src/utils/guards/jwt-auth.guard';
+import { LocalRequestGuard } from 'src/utils/guards/local-request.guard';
 
 @ApiTags('contacts')
 @Controller('contacts')
@@ -56,9 +56,8 @@ export class ContactsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
   @ApiBearerAuth()
-  @LocalOnly()
   @ApiOperation({ summary: 'Retrieve all contact' })
   @ApiResponse({ status: 200, description: 'Contact found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
@@ -85,7 +84,7 @@ export class ContactsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Retrieve a specific  chat by userID and ProviderID',
+    summary: 'Retrieve a specific chat by userID and ProviderID',
   })
   @ApiResponse({ status: 200, description: 'Contact found' })
   @ApiResponse({ status: 404, description: 'Contact not found' })
