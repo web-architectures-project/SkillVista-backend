@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UserType } from '@prisma/client';
 import { encodePassword } from '../src/utils/bcrypt';
 
 const prisma = new PrismaClient();
@@ -9,9 +9,10 @@ async function main() {
       username: 'johnDoe',
       password: encodePassword('securePass123'),
       email: 'john.doe@email.com',
-      user_type: 'user',
+      user_type: UserType.user,
       Profile: {
         create: {
+          user_id: 1,
           first_name: 'John',
           last_name: 'Doe',
           phone_number: '1234567891',
@@ -32,6 +33,7 @@ async function main() {
       user_type: 'user',
       Profile: {
         create: {
+          user_id: 2,
           first_name: 'Jane',
           last_name: 'Doe',
           phone_number: '1234567892',
@@ -52,6 +54,7 @@ async function main() {
       user_type: 'user',
       Profile: {
         create: {
+          user_id: 3,
           first_name: 'Jim',
           last_name: 'Doe',
           phone_number: '1234567893',
@@ -64,7 +67,7 @@ async function main() {
     },
   });
 
-  const provider1 = await prisma.provider.create({
+  const provider1 = await prisma.user.create({
     data: {
       username: 'janeProvider',
       password: encodePassword('providerPass456'),
@@ -72,6 +75,7 @@ async function main() {
       user_type: 'service_provider',
       Profile: {
         create: {
+          user_id: 4,
           first_name: 'Jane',
           last_name: 'Smith',
           phone_number: '0987654321',
@@ -84,7 +88,7 @@ async function main() {
     },
   });
 
-  const provider2 = await prisma.provider.create({
+  const provider2 = await prisma.user.create({
     data: {
       username: 'johnProvider',
       password: encodePassword('providerPass789'),
@@ -92,6 +96,7 @@ async function main() {
       user_type: 'service_provider',
       Profile: {
         create: {
+          user_id: 5,
           first_name: 'John',
           last_name: 'Smith',
           phone_number: '0987654322',
@@ -104,7 +109,7 @@ async function main() {
     },
   });
 
-  const provider3 = await prisma.provider.create({
+  const provider3 = await prisma.user.create({
     data: {
       username: 'janeDoeProvider',
       password: encodePassword('providerPass123'),
@@ -112,6 +117,7 @@ async function main() {
       user_type: 'service_provider',
       Profile: {
         create: {
+          user_id: 6,
           first_name: 'Jane',
           last_name: 'Doe',
           phone_number: '0987654323',
@@ -148,7 +154,7 @@ async function main() {
 
   const service1 = await prisma.service.create({
     data: {
-      provider_id: provider1.provider_id,
+      provider_id: provider1.user_id,
       service_type_id: serviceCategory1.service_category_id,
       description: 'Pipe fixing',
       pricing: 49.99,
@@ -158,7 +164,7 @@ async function main() {
 
   const service2 = await prisma.service.create({
     data: {
-      provider_id: provider2.provider_id,
+      provider_id: provider2.user_id,
       service_type_id: serviceCategory2.service_category_id,
       description: 'Wiring repair',
       pricing: 59.99,
@@ -168,7 +174,7 @@ async function main() {
 
   const service3 = await prisma.service.create({
     data: {
-      provider_id: provider3.provider_id,
+      provider_id: provider3.user_id,
       service_type_id: serviceCategory3.service_category_id,
       description: 'Lawn mowing',
       pricing: 34.99,
@@ -179,7 +185,7 @@ async function main() {
   await prisma.contact.create({
     data: {
       user_id: user1.user_id,
-      provider_id: provider1.provider_id,
+      provider_id: provider1.user_id,
       who: 'user',
       message_content: 'Can you fix my sink?',
     },
@@ -188,7 +194,7 @@ async function main() {
   await prisma.contact.create({
     data: {
       user_id: user2.user_id,
-      provider_id: provider2.provider_id,
+      provider_id: provider2.user_id,
       who: 'user',
       message_content: 'Do you do electrical inspections?',
     },
@@ -197,7 +203,7 @@ async function main() {
   await prisma.contact.create({
     data: {
       user_id: user3.user_id,
-      provider_id: provider3.provider_id,
+      provider_id: provider3.user_id,
       who: 'user',
       message_content: 'Can you help with garden maintenance?',
     },
