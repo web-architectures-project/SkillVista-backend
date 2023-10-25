@@ -12,13 +12,20 @@ import {
   HttpCode,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -64,6 +71,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Find all users' })
   @ApiResponse({ status: 201, description: 'User data returned Successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -71,7 +80,7 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async findAll(@Res() res: Response) {
     try {
-      const users = this.usersService.findAll();
+      const users = await this.usersService.findAll();
       return res.status(HttpStatus.OK).json(users);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -79,6 +88,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get a single user' })
   @ApiResponse({ status: 201, description: 'User returned successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -98,6 +109,8 @@ export class UsersController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update the user' })
   @ApiResponse({ status: 201, description: 'User updated succesfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -117,6 +130,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a user' })
   @ApiResponse({ status: 201, description: 'User deleted successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
