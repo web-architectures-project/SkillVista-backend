@@ -28,5 +28,5 @@ export class CreateUserDto {
   @ApiProperty({ required: true })
   @IsEnum(UserType, { message: 'Invalid User Type' })
   @IsNotEmpty({ message: 'First Name Required' })
-  userType: UserType;
+  user_type: UserType;
 }
