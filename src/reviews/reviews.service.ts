@@ -9,7 +9,7 @@ export class ReviewsService {
 
   async create(createReviewDto: CreateReviewDto) {
     try {
-      this.prisma.review.create({
+      await this.prisma.review.create({
         data: createReviewDto,
       });
       return HttpStatus.CREATED;
@@ -25,7 +25,7 @@ export class ReviewsService {
   }
 
   async findAll() {
-    return this.prisma.review.findMany();
+    return await this.prisma.review.findMany();
   }
 
   async findOne(id: number) {
@@ -47,7 +47,7 @@ export class ReviewsService {
 
   async update(id: number, updateReviewDto: UpdateReviewDto) {
     try {
-      this.prisma.review.update({
+      await this.prisma.review.update({
         where: { review_id: id },
         data: updateReviewDto,
       });
@@ -65,7 +65,7 @@ export class ReviewsService {
 
   async remove(id: number) {
     try {
-      this.prisma.review.delete({
+      await this.prisma.review.delete({
         where: { review_id: id },
       });
       return HttpStatus.OK;

@@ -12,12 +12,22 @@ import {
   HttpCode,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LoginUserDto } from './dto/login-user.dto';
+import { JwtAuthGuard } from '../utils/guards/jwt-auth.guard';
+import { LocalRequestGuard } from 'src/utils/guards/local-request.guard';
+import { UserOwnershipGuard } from 'src/utils/guards/user-ownership.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -45,24 +55,26 @@ export class UsersController {
 
   @Post('login')
   @ApiOperation({ summary: 'Login' })
-  @ApiResponse({ status: 201, description: 'User logged in succesfully' })
+  @ApiResponse({ status: 200, description: 'User logged in succesfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async loginWithUsernameAndPassword(
-    @Body() userData: CreateUserDto,
+    @Body() userData: LoginUserDto,
     @Res() res: Response,
   ) {
     try {
       const token =
         await this.usersService.loginWithUsernameAndPassword(userData);
-      return res.status(HttpStatus.OK).json({ token });
+      return res.status(HttpStatus.OK).json(token);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
     }
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Find all users' })
   @ApiResponse({ status: 201, description: 'User data returned Successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -70,7 +82,7 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async findAll(@Res() res: Response) {
     try {
-      const users = this.usersService.findAll();
+      const users = await this.usersService.findAll();
       return res.status(HttpStatus.OK).json(users);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -78,25 +90,25 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, UserOwnershipGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get a single user' })
-  @ApiResponse({ status: 201, description: 'User returned successfully' })
+  @ApiResponse({ status: 200, description: 'User returned successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
       const user = await this.usersService.findOne(+id);
-      if (!user) throw new Error('User not found');
       return res.status(HttpStatus.OK).json(user);
     } catch (error) {
-      if (error.message === 'User not found') {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-      }
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard, UserOwnershipGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update the user' })
   @ApiResponse({ status: 201, description: 'User updated succesfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -116,6 +128,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, UserOwnershipGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a user' })
   @ApiResponse({ status: 201, description: 'User deleted successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })

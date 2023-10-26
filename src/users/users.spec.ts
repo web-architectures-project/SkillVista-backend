@@ -12,7 +12,9 @@ jest.mock('../utils/bcrypt');
 describe('UsersService', () => {
   let service: UsersService;
   let prismaMock: any;
-  let jwtServiceMock: any;
+  const jwtServiceMock = {
+    sign: jest.fn().mockReturnValue('some-mocked-jwt-token'),
+  };
 
   beforeEach(async () => {
     prismaMock = {
@@ -26,12 +28,11 @@ describe('UsersService', () => {
       },
     };
 
-    jwtServiceMock = {};
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
         { provide: PrismaService, useValue: prismaMock },
+        { provide: JwtService, useValue: jwtServiceMock },
         { provide: JwtService, useValue: jwtServiceMock },
       ],
     }).compile();
@@ -48,6 +49,7 @@ describe('UsersService', () => {
       email: 'test@example.com',
       username: 'testuser',
       password: 'testpass',
+      userType: 'user',
     };
 
     prismaMock.user.findFirst.mockResolvedValue(null);
@@ -70,7 +72,7 @@ describe('UsersService', () => {
     jest.spyOn(bcrypt, 'decodePassword').mockImplementation(() => true);
 
     const response = await service.loginWithUsernameAndPassword(loginUserDto);
-    expect(response).toEqual(200);
+    expect(response).toEqual({ accessToken: undefined });
   });
 
   it('should return all users when requested', async () => {

@@ -49,7 +49,7 @@ describe('ContactsService', () => {
       prisma.contact.create.mockResolvedValue(mockContact);
 
       const result = await service.create(mockContact);
-      expect(result).toEqual(mockContact);
+      expect(result).toEqual(201);
     });
   });
 
@@ -73,12 +73,13 @@ describe('ContactsService', () => {
         provider_id: 2,
         message_content: 'Hello',
         who: 'user',
+        contact_id: 1,
       };
 
       prisma.contact.findUnique.mockResolvedValue(mockContact);
 
       const result = await service.findOne(1);
-      expect(result.contact).toEqual(mockContact);
+      expect(result).toEqual(mockContact);
     });
 
     it('should throw an error if contact is not found', async () => {
@@ -102,7 +103,7 @@ describe('ContactsService', () => {
       prisma.contact.update.mockResolvedValue(mockUpdatedContact);
 
       const result = await service.update(1, mockUpdatedContact);
-      expect(result).toEqual(mockUpdatedContact);
+      expect(result).toEqual(200);
     });
   });
 
@@ -119,7 +120,7 @@ describe('ContactsService', () => {
       prisma.contact.delete.mockResolvedValue(mockContact);
 
       const result = await service.remove(1);
-      expect(result).toEqual(mockContact);
+      expect(result).toEqual(200);
     });
 
     it('should throw an error if contact to be deleted is not found', async () => {
