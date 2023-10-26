@@ -20,6 +20,7 @@ export class UsersService {
 
   async create(data: CreateUserDto) {
     try {
+      console.log(data);
       // Hash the user's password using the encodePassword function.
       data.password = encodePassword(data?.password);
       // Create a new user with the provided data.
