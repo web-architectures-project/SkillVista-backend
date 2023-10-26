@@ -95,7 +95,7 @@ export class ContactsService {
       throw new NotFoundException(`use user or service_provider for who `);
     }
 
-    this.prisma.contact.update({
+    await this.prisma.contact.update({
       where: { contact_id: contact_id },
       data: updateContactDto,
     });
