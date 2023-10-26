@@ -65,7 +65,7 @@ export class UsersService {
   // Other API Endpoints
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return await this.prisma.user.findMany();
   }
 
   async findOne(id: number) {
@@ -83,7 +83,7 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    this.prisma.user.update({
+    await this.prisma.user.update({
       where: { user_id: id },
       data: updateUserDto,
     });

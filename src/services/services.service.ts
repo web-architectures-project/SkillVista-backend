@@ -9,7 +9,7 @@ export class ServicesService {
 
   async create(createServiceDto: CreateServiceDto) {
     try {
-      this.prisma.service.create({
+      await this.prisma.service.create({
         data: createServiceDto,
       });
       return HttpStatus.CREATED;
@@ -25,7 +25,7 @@ export class ServicesService {
   }
 
   async findAll() {
-    return this.prisma.service.findMany();
+    return await this.prisma.service.findMany();
   }
 
   async findOne(id: number) {
@@ -47,7 +47,7 @@ export class ServicesService {
 
   async update(id: number, updateServiceDto: UpdateServiceDto) {
     try {
-      this.prisma.service.update({
+      await this.prisma.service.update({
         where: { service_id: id },
         data: updateServiceDto,
       });
@@ -65,7 +65,7 @@ export class ServicesService {
 
   async remove(id: number) {
     try {
-      this.prisma.service.delete({
+      await this.prisma.service.delete({
         where: { service_id: id },
       });
       return HttpStatus.OK;

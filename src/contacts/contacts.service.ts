@@ -30,14 +30,14 @@ export class ContactsService {
       throw new NotFoundException(`use user or service_provider for who `);
     }
 
-    this.prisma.contact.create({
+    await this.prisma.contact.create({
       data: createContactDto,
     });
     return HttpStatus.CREATED;
   }
 
   async findAll() {
-    return this.prisma.contact.findMany();
+    return await this.prisma.contact.findMany();
   }
 
   async findChat(findChat: FindChatDto) {
@@ -114,7 +114,7 @@ export class ContactsService {
       throw new NotFoundException('Profile not found');
     }
 
-    this.prisma.contact.delete({
+    await this.prisma.contact.delete({
       where: { contact_id: contact_id },
     });
     return HttpStatus.OK;

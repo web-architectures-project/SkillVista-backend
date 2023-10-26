@@ -13,7 +13,7 @@ export class ProfilesService {
 
   async create(createProfileDto: CreateProfileDto) {
     try {
-      this.prisma.profile.create({
+      await this.prisma.profile.create({
         data: createProfileDto,
       });
       return HttpStatus.CREATED;
@@ -48,7 +48,7 @@ export class ProfilesService {
 
   async update(id: number, updateReviewDto: CreateProfileDto) {
     try {
-      this.prisma.profile.update({
+      await this.prisma.profile.update({
         where: { profile_id: id },
         data: updateReviewDto,
       });
@@ -66,7 +66,7 @@ export class ProfilesService {
 
   async remove(profile_id: number) {
     try {
-      this.prisma.profile.delete({
+      await this.prisma.profile.delete({
         where: { profile_id: profile_id },
       });
       return HttpStatus.OK;
