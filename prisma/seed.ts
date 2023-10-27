@@ -12,7 +12,6 @@ async function main() {
       user_type: UserType.user,
       Profile: {
         create: {
-          user_id: 1,
           first_name: 'John',
           last_name: 'Doe',
           phone_number: '1234567891',
@@ -33,7 +32,6 @@ async function main() {
       user_type: 'user',
       Profile: {
         create: {
-          user_id: 2,
           first_name: 'Jane',
           last_name: 'Doe',
           phone_number: '1234567892',
@@ -54,7 +52,6 @@ async function main() {
       user_type: 'user',
       Profile: {
         create: {
-          user_id: 3,
           first_name: 'Jim',
           last_name: 'Doe',
           phone_number: '1234567893',
@@ -75,7 +72,6 @@ async function main() {
       user_type: 'service_provider',
       Profile: {
         create: {
-          user_id: 4,
           first_name: 'Jane',
           last_name: 'Smith',
           phone_number: '0987654321',
@@ -96,7 +92,6 @@ async function main() {
       user_type: 'service_provider',
       Profile: {
         create: {
-          user_id: 5,
           first_name: 'John',
           last_name: 'Smith',
           phone_number: '0987654322',
@@ -117,7 +112,6 @@ async function main() {
       user_type: 'service_provider',
       Profile: {
         create: {
-          user_id: 6,
           first_name: 'Jane',
           last_name: 'Doe',
           phone_number: '0987654323',

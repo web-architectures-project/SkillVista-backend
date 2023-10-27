@@ -20,12 +20,27 @@ export class UsersService {
 
   async create(data: CreateUserDto) {
     try {
-      // Hash the user's password using the encodePassword function.
-      data.password = encodePassword(data?.password);
-      // Create a new user with the provided data.
+      const hashedPassword = encodePassword(data?.password);
       await this.prisma.user.create({
-        data: data,
+        data: {
+          username: data.username,
+          password: hashedPassword,
+          email: data.email,
+          user_type: data.user_type,
+          Profile: {
+            create: {
+              first_name: data.first_name,
+              last_name: data.last_name,
+              phone_number: data.phone_number,
+              address: data.address,
+              city: data.city,
+              county: data.county,
+              Eircode: data.Eircode,
+            },
+          },
+        },
       });
+
       return HttpStatus.CREATED;
     } catch (error) {
       return new HttpErrorByCode['500'](error);

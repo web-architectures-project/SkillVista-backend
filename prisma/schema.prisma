@@ -14,24 +14,23 @@ enum UserType {
 }
 
 model User {
-  user_id           Int       @id @default(autoincrement())
-  username          String    @unique
-  password          String
-  email             String    @unique
-  date_created      DateTime  @default(now()) @map(name: "created_at")
-  last_login        DateTime  @default(now())
-  user_type         UserType  @default(user)
-  profileId         Int       @unique
-  Review            Review?
-  Profile           Profile?   @relation(fields: [profileId], references: [profile_id])
-  servicesProvided  Service[] @relation("ProviderRelation")
-  sentContacts      Contact[] @relation("ContactUserRelation")
-  receivedContacts  Contact[] @relation("ContactProviderRelation")
+  user_id          Int       @id @default(autoincrement())
+  username         String    @unique
+  password         String
+  email            String    @unique
+  date_created     DateTime  @default(now()) @map(name: "created_at")
+  last_login       DateTime  @default(now())
+  user_type        UserType  @default(user)
+  profileId        Int       @unique
+  Review           Review?
+  Profile          Profile   @relation(fields: [profileId], references: [profile_id])
+  servicesProvided Service[] @relation("ProviderRelation")
+  sentContacts     Contact[] @relation("ContactUserRelation")
+  receivedContacts Contact[] @relation("ContactProviderRelation")
 }
 
 model Profile {
   profile_id          Int     @id @default(autoincrement())
-  user_id              Int     @unique
   first_name          String
   last_name           String
   phone_number        String  @unique
