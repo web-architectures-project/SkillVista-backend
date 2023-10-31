@@ -97,6 +97,12 @@ export class UsersService {
     return user;
   }
 
+  async returnUserIdFromToken(token: string) {
+    const { id: userId } = this.jwtService.verify(token);
+
+    return { userId: userId };
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     await this.prisma.user.update({
       where: { user_id: id },
