@@ -76,7 +76,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, LocalRequestGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Find all users' })
-  @ApiResponse({ status: 201, description: 'User data returned Successfully' })
+  @ApiResponse({ status: 200, description: 'User data returned Successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'user not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
@@ -84,6 +84,24 @@ export class UsersController {
     try {
       const users = await this.usersService.findAll();
       return res.status(HttpStatus.OK).json(users);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('validate/:token')
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Validate a user' })
+  @ApiResponse({ status: 200, description: 'User data returned Successfully' })
+  @ApiResponse({ status: 401, description: 'Invalid token' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async validate(@Res() res: Response, @Param('token') token: string) {
+    try {
+      const validatedToken =
+        await this.usersService.returnUserIdFromToken(token);
+      return res.status(HttpStatus.OK).json(validatedToken);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
