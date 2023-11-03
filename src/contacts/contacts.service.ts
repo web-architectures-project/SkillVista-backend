@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateContactDto } from './dto/update-contact.dto';
@@ -19,8 +19,8 @@ export class ContactsService {
       throw new NotFoundException(`user ${user_id} is not found`);
     }
 
-    const provider = await this.prisma.provider.findUnique({
-      where: { provider_id: provider_id },
+    const provider = await this.prisma.user.findUnique({
+      where: { user_id: provider_id },
     });
     if (!provider) {
       throw new NotFoundException(`provider ${provider_id} is not found`);
@@ -30,33 +30,32 @@ export class ContactsService {
       throw new NotFoundException(`use user or service_provider for who `);
     }
 
-    return this.prisma.contact.create({
+    await this.prisma.contact.create({
       data: createContactDto,
     });
+    return HttpStatus.CREATED;
   }
 
   async findAll() {
-    return this.prisma.contact.findMany();
+    return await this.prisma.contact.findMany();
   }
 
   async findChat(findChat: FindChatDto) {
-    const { user_id, provider_id } = findChat;
-    console.log(user_id);
-
     const contact = await this.prisma.contact.findMany({
       where: {
-        AND: [
-          { user_id: Number(user_id) },
-          { provider_id: Number(provider_id) },
+        OR: [
+          {
+            user_id: findChat.user_id,
+            provider_id: findChat.provider_id,
+          },
+          {
+            user_id: findChat.provider_id,
+            provider_id: findChat.user_id,
+          },
         ],
       },
     });
-    if (!contact) {
-      throw new NotFoundException(
-        `Chatting${user_id} and ${provider_id} with is not found`,
-      );
-    }
-    return { contact: contact, statusCode: 200 };
+    return contact;
   }
 
   async findOne(id: number) {
@@ -69,7 +68,7 @@ export class ContactsService {
       throw new NotFoundException('Profile not found');
     }
 
-    return { contact: contact, statusCode: 200 };
+    return contact;
   }
 
   async update(id: number, updateContactDto: UpdateContactDto) {
@@ -85,8 +84,8 @@ export class ContactsService {
       throw new NotFoundException(`user ${user_id} is not found`);
     }
 
-    const provider = await this.prisma.provider.findUnique({
-      where: { provider_id: provider_id },
+    const provider = await this.prisma.user.findUnique({
+      where: { user_id: provider_id },
     });
     if (!provider) {
       throw new NotFoundException(`provider ${provider_id} is not found`);
@@ -96,10 +95,12 @@ export class ContactsService {
       throw new NotFoundException(`use user or service_provider for who `);
     }
 
-    return this.prisma.contact.update({
+    await this.prisma.contact.update({
       where: { contact_id: contact_id },
       data: updateContactDto,
     });
+
+    return HttpStatus.OK;
   }
 
   async remove(id: number) {
@@ -113,8 +114,9 @@ export class ContactsService {
       throw new NotFoundException('Profile not found');
     }
 
-    return this.prisma.contact.delete({
+    await this.prisma.contact.delete({
       where: { contact_id: contact_id },
     });
+    return HttpStatus.OK;
   }
 }

@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import * as bcrypt from '../utils/bcrypt'; // Import the whole module
+import { UpdateUserDto } from './dto/update-user.dto';
 
 // Mock at the top-level, outside of any describe or function.
 jest.mock('../utils/bcrypt');
@@ -12,7 +13,9 @@ jest.mock('../utils/bcrypt');
 describe('UsersService', () => {
   let service: UsersService;
   let prismaMock: any;
-  let jwtServiceMock: any;
+  const jwtServiceMock = {
+    sign: jest.fn().mockReturnValue('some-mocked-jwt-token'),
+  };
 
   beforeEach(async () => {
     prismaMock = {
@@ -26,12 +29,11 @@ describe('UsersService', () => {
       },
     };
 
-    jwtServiceMock = {};
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
         { provide: PrismaService, useValue: prismaMock },
+        { provide: JwtService, useValue: jwtServiceMock },
         { provide: JwtService, useValue: jwtServiceMock },
       ],
     }).compile();
@@ -48,6 +50,14 @@ describe('UsersService', () => {
       email: 'test@example.com',
       username: 'testuser',
       password: 'testpass',
+      user_type: 'user',
+      first_name: 'test',
+      last_name: 'user',
+      phone_number: '1234567890',
+      address: 'test address',
+      city: 'test city',
+      county: 'test county',
+      Eircode: 'test eircode',
     };
 
     prismaMock.user.findFirst.mockResolvedValue(null);
@@ -70,7 +80,7 @@ describe('UsersService', () => {
     jest.spyOn(bcrypt, 'decodePassword').mockImplementation(() => true);
 
     const response = await service.loginWithUsernameAndPassword(loginUserDto);
-    expect(response).toEqual(200);
+    expect(response).toEqual({ accessToken: undefined });
   });
 
   it('should return all users when requested', async () => {
@@ -98,8 +108,11 @@ describe('UsersService', () => {
   });
 
   it('should return a status 200 when a user is updated', async () => {
-    const updateUserDto = {
-      email: ' ',
+    const updateUserDto: UpdateUserDto = {
+      username: 'testuser',
+      user_type: 'user',
+      email: 'test@email.com',
+      password: 'testpass',
     };
 
     prismaMock.user.update.mockResolvedValue(updateUserDto);
