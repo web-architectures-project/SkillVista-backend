@@ -1,0 +1,19 @@
+meilisearch:
+  api_url: http://localhost:7700/
+  api_key: '5pHag2T-owe97x2Ksamf-2E3zHUMLXDISDsDG1GYzUw'
+  insert_size: 1000
+  insert_interval: 10
+source:
+  type: mysql
+  host: 127.0.0.1 # assuming your MySQL server is running on the same machine as `meilisync`
+  port: 3306
+  database: skillvista_db
+  user: skillvista
+  password: skillvista
+  sync:
+  - table: ServiceCategory
+    index: service_category_index
+    full: true
+  - table: Service
+    index: service_index
+    full: true

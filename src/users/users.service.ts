@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -5,7 +6,6 @@ import { encodePassword, decodePassword } from '../utils/bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
-import { JwtService } from '@nestjs/jwt';
 import { AuthEntity } from './user.entity';
 
 @Injectable()
