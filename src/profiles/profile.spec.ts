@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProfilesService } from './profiles.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { HttpService } from '@nestjs/axios';
 
 const mockPrismaService = () => ({
   user: {
@@ -26,6 +27,12 @@ describe('ProfilesService', () => {
         {
           provide: PrismaService,
           useValue: mockPrismaService(),
+        },
+        {
+          provide: HttpService,
+          useValue: {
+            get: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -98,7 +105,6 @@ describe('ProfilesService', () => {
           city: 'City',
           county: 'County',
           Eircode: '12345',
-          user_id: 0,
         });
 
         expect(result).toEqual(200);
