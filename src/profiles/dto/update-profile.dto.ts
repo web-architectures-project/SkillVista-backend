@@ -5,16 +5,11 @@ import {
   Matches,
   Length,
   IsString,
-  IsInt,
+  // IsInt,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateProfileDto {
-  @ApiProperty({ required: true })
-  @IsInt()
-  @IsNotEmpty()
-  user_id: number;
-
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsString()
