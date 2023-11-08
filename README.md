@@ -48,4 +48,4 @@ To contribute to this code, please fork the repository and create a new branch f
 
 ## License
 
-(TBD)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
