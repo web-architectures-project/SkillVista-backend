@@ -126,11 +126,22 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    this.prisma.user.delete({
-      where: {
-        user_id: id,
-      },
-    });
+    const [removeUser, removeProfile] = await this.prisma.$transaction([
+      this.prisma.user.delete({
+        where: {
+          user_id: id,
+        },
+      }),
+      this.prisma.profile.delete({
+        where: {
+          profile_id: id,
+        },
+      }),
+    ]);
+
+    if (!removeUser && !removeProfile) {
+      console.log('Something went wrong');
+    }
 
     if (!this.prisma.user) {
       throw new HttpErrorByCode['404']('User not found');

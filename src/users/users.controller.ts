@@ -64,8 +64,6 @@ export class UsersController {
     @Body() userData: LoginUserDto,
     @Res() res: Response,
   ) {
-    console.log(userData);
-
     try {
       const token =
         await this.usersService.loginWithUsernameAndPassword(userData);
@@ -156,9 +154,9 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async remove(@Param('id') id: string, @Res() res: Response) {
+  async remove(@Param('id') id: number, @Res() res: Response) {
     try {
-      this.usersService.remove(+id);
+      this.usersService.remove(id);
       return res.status(HttpStatus.NO_CONTENT).send();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
