@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -5,8 +6,8 @@ import { encodePassword, decodePassword } from '../utils/bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
-import { JwtService } from '@nestjs/jwt';
 import { AuthEntity } from './user.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -43,7 +44,15 @@ export class UsersService {
 
       return HttpStatus.CREATED;
     } catch (error) {
-      return new HttpErrorByCode['500'](error);
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          console.log({
+            code: error.code,
+            meta: error.meta?.target,
+          });
+          throw new HttpErrorByCode['409'](error.name);
+        }
+      }
     }
   }
 
@@ -117,11 +126,22 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    this.prisma.user.delete({
-      where: {
-        user_id: id,
-      },
-    });
+    const [removeUser, removeProfile] = await this.prisma.$transaction([
+      this.prisma.user.delete({
+        where: {
+          user_id: id,
+        },
+      }),
+      this.prisma.profile.delete({
+        where: {
+          profile_id: id,
+        },
+      }),
+    ]);
+
+    if (!removeUser && !removeProfile) {
+      console.log('Something went wrong');
+    }
 
     if (!this.prisma.user) {
       throw new HttpErrorByCode['404']('User not found');

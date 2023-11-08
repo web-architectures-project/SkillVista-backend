@@ -23,7 +23,7 @@ model User {
   user_type        UserType  @default(user)
   profileId        Int       @unique
   Review           Review?
-  Profile          Profile   @relation(fields: [profileId], references: [profile_id])
+  Profile          Profile   @relation(fields: [profileId], references: [profile_id], onDelete: Cascade)
   servicesProvided Service[] @relation("ProviderRelation")
   sentContacts     Contact[] @relation("ContactUserRelation")
   receivedContacts Contact[] @relation("ContactProviderRelation")
@@ -40,7 +40,7 @@ model Profile {
   Eircode             String  @unique
   profile_picture_url String?
   bio                 String?
-  user                User?
+  User                User?
 }
 
 model ServiceCategory {

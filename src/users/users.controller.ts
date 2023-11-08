@@ -47,6 +47,7 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     try {
       const user = await this.usersService.create(createUserDto);
+
       return res.status(HttpStatus.CREATED).json(user);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -153,9 +154,9 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async remove(@Param('id') id: string, @Res() res: Response) {
+  async remove(@Param('id') id: number, @Res() res: Response) {
     try {
-      this.usersService.remove(+id);
+      this.usersService.remove(id);
       return res.status(HttpStatus.NO_CONTENT).send();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
