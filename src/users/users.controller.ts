@@ -47,6 +47,7 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     try {
       const user = await this.usersService.create(createUserDto);
+
       return res.status(HttpStatus.CREATED).json(user);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -63,6 +64,8 @@ export class UsersController {
     @Body() userData: LoginUserDto,
     @Res() res: Response,
   ) {
+    console.log(userData);
+
     try {
       const token =
         await this.usersService.loginWithUsernameAndPassword(userData);

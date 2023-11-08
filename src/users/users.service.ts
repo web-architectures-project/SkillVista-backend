@@ -7,6 +7,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 import { AuthEntity } from './user.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -43,7 +44,18 @@ export class UsersService {
 
       return HttpStatus.CREATED;
     } catch (error) {
-      return new HttpErrorByCode['500'](error);
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          console.log({
+            code: error.code,
+            meta: error.meta?.target,
+          });
+          throw new HttpErrorByCode['409'](error.name);
+          // return { error_code: error.code, error_location: error.meta?.target };
+        }
+      }
+
+      // return new HttpErrorByCode['500'](error);
     }
   }
 
