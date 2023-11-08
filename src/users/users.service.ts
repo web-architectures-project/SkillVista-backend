@@ -51,11 +51,8 @@ export class UsersService {
             meta: error.meta?.target,
           });
           throw new HttpErrorByCode['409'](error.name);
-          // return { error_code: error.code, error_location: error.meta?.target };
         }
       }
-
-      // return new HttpErrorByCode['500'](error);
     }
   }
 
