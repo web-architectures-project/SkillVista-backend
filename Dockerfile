@@ -19,11 +19,11 @@ RUN npm install && \
 RUN npm run build
 
 # Remove development dependencies to reduce image size
-RUN npm prune --production
+RUN npm prune --omit-dev
 
 # Expose ports for the app
-EXPOSE 3001 3306
+EXPOSE 3001
 
 # Deploy Prisma db and start the app
-CMD sh -c "sleep 10 && npx prisma db push && npm run start:prod"
+CMD sh -c "sleep 10 && npx prisma db push && npm run seed && npm run start:prod"
 
