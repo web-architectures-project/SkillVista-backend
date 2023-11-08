@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class SearchService {
-  // Initate prisma
-  prisma = new PrismaClient();
+  constructor(private readonly prisma: PrismaService) {}
+
   natural = require('natural');
 
   async search(input: string = '') {
@@ -36,13 +36,13 @@ export class SearchService {
     // Grab all locations from the database
     const locations = await this.prisma.profile.findMany({
       select: {
-        address: true,
+        county: true,
       },
     });
 
     // Convert locations into an array of strings
     const locationList = locations.map((location) =>
-      location.address.toLowerCase(),
+      location.county.toLowerCase(),
     );
 
     // Grab all serviceTypes from the database
@@ -127,12 +127,19 @@ export class SearchService {
     for (const i in locationList) {
       const confidence = this.natural.JaroWinklerDistance(
         remainingInput,
-        locationList[i].toLowerCase(),
+        locationList[i],
       );
-      if (confidence > 0.8) {
-        locationOutput = locations[i].address;
+      if (confidence > 0.7) {
+        locationOutput = locations[i].county;
         break;
       }
+    }
+
+    // Define the price condition interface
+    interface PriceCondition {
+      equals?: number;
+      gte?: number;
+      lte?: number;
     }
 
     // Based on what has been gathered, search the database for services that match
@@ -140,57 +147,69 @@ export class SearchService {
     // If there is a location, search for that
     // If there is a price, search for that
     // If there is a range, search for that
-    // If there is nothing, return all services
     let searchResult = [];
-    if (
-      serviceTypeOutput.output !== '' ||
-      locationOutput !== '' ||
-      specificPrice > 0 ||
-      rangePrice.upper > 0 ||
-      rangePrice.lower > 0 ||
-      remainingInput !== ''
-    ) {
-      searchResult = await this.prisma.service.findMany({
-        where: {
-          OR: [
-            {
-              service_category: {
-                service_name: {
-                  contains: serviceTypeOutput.output,
-                },
-              },
-            },
-            {
-              provider: {
-                Profile: {
-                  address: {
-                    contains: locationOutput,
-                  },
-                },
-              },
-            },
 
-            {
-              OR: [
-                {
-                  pricing: {
-                    equals: specificPrice,
-                  },
-                },
-                {
-                  pricing: {
-                    gte: rangePrice.lower,
-                    lte: rangePrice.upper,
-                  },
-                },
-              ],
-            },
-          ],
+    // Create an array to hold all the 'AND' conditions
+    const ANDConditions = [];
+
+    // Check for service type and add condition if it exists
+    if (serviceTypeOutput && serviceTypeOutput.output !== '') {
+      ANDConditions.push({
+        service_category: {
+          service_name: {
+            contains: serviceTypeOutput.output,
+          },
         },
       });
-    } else {
-      searchResult = await this.prisma.service.findMany();
     }
+
+    // Check for location and add condition if it exists
+    if (locationOutput !== '') {
+      ANDConditions.push({
+        provider: {
+          Profile: {
+            // Adjust the nesting based on your actual schema
+            county: {
+              equals: locationOutput,
+            },
+          },
+        },
+      });
+    }
+
+    // Check for specific price and add condition if it is greater than zero
+    if (specificPrice > 0) {
+      ANDConditions.push({
+        pricing: {
+          equals: specificPrice,
+        },
+      });
+    }
+
+    // Check for price range and add condition if either boundary is greater than zero
+    if (rangePrice.lower > 0 || rangePrice.upper > 0) {
+      const priceCondition: PriceCondition = {};
+      if (rangePrice.lower > 0) {
+        priceCondition.gte = rangePrice.lower;
+      }
+      if (rangePrice.upper > 0) {
+        priceCondition.lte = rangePrice.upper;
+      }
+      ANDConditions.push({
+        pricing: priceCondition,
+      });
+    }
+
+    // Perform the search if there are any 'AND' conditions
+    if (ANDConditions.length > 0) {
+      searchResult = await this.prisma.service.findMany({
+        where: {
+          AND: ANDConditions, // Using AND logic by combining all conditions
+        },
+      });
+    }
+
+    console.log(ANDConditions);
 
     return {
       serviceTypeOutput: serviceTypeOutput.output,
