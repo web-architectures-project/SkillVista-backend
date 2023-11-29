@@ -22,6 +22,10 @@ async function bootstrap() {
   );
 
   app.enableCors();
-  await app.listen(3001);
+  try {
+    await app.listen(3001);
+  } catch (error) {
+    console.log("Make sure you have Database running, and at 'localhost:3006'");
+  }
 }
 bootstrap();
