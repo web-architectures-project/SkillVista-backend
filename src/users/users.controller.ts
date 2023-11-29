@@ -109,8 +109,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, UserOwnershipGuard)
-  @ApiBearerAuth()
+  @UseGuards() // Guards were removed here to support /search in frontend -1Solon
   @ApiOperation({ summary: 'Get a single user' })
   @ApiResponse({ status: 200, description: 'User returned successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
