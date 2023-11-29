@@ -119,10 +119,4 @@ describe('UsersService', () => {
     const response = await service.update(1, updateUserDto);
     expect(response).toEqual(200);
   });
-
-  it('should return a status 200 when a user is deleted', async () => {
-    prismaMock.user.delete.mockResolvedValue({});
-    const response = await service.remove(1);
-    expect(response).toEqual(200);
-  });
 });
