@@ -7,12 +7,21 @@ import {
   Param,
   Delete,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { LocalRequestGuard } from '../utils/guards/local-request.guard';
+import { JwtAuthGuard } from '../utils/guards/jwt-auth.guard';
 
 @ApiTags('reviews')
 @Controller('reviews')
@@ -20,6 +29,8 @@ export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new review' })
   @ApiResponse({ status: 201, description: 'Review created successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -50,6 +61,8 @@ export class ReviewsController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Review ID' })
   @ApiOperation({ summary: 'Update a review by ID' })
   @ApiResponse({ status: 200, description: 'Review updated successfully' })
@@ -61,6 +74,8 @@ export class ReviewsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Review ID' })
   @ApiOperation({ summary: 'Delete a review by ID' })
   @ApiResponse({ status: 200, description: 'Review deleted successfully' })
