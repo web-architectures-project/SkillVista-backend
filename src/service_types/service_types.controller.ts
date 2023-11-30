@@ -7,11 +7,20 @@ import {
   Delete,
   HttpCode,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ServiceTypesService } from './service_types.service';
 import { CreateServiceTypeDto } from './dto/create-service_type.dto';
 import { UpdateServiceTypeDto } from './dto/update-service_type.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from '../utils/guards/jwt-auth.guard';
+import { LocalRequestGuard } from '../utils/guards/local-request.guard';
 
 @ApiTags('service-types')
 @Controller('service-types')
@@ -19,6 +28,8 @@ export class ServiceTypesController {
   constructor(private readonly serviceTypesService: ServiceTypesService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new service type' })
   @ApiResponse({
     status: 201,
@@ -51,6 +62,8 @@ export class ServiceTypesController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Service type ID' })
   @ApiOperation({ summary: 'Update a service type by ID' })
   @ApiResponse({
@@ -68,6 +81,8 @@ export class ServiceTypesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Service type ID' })
   @ApiOperation({ summary: 'Delete a service type by ID' })
   @ApiResponse({

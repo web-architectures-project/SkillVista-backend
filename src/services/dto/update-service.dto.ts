@@ -4,6 +4,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsString,
+  IsUrl,
   Matches,
   MaxLength,
 } from 'class-validator';
@@ -43,4 +44,10 @@ export class UpdateServiceDto {
   @IsDate()
   @IsNotEmpty()
   date_created: Date;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  @IsUrl()
+  @MaxLength(255)
+  service_image_url: string;
 }

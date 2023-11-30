@@ -54,6 +54,7 @@ describe('ServicesController', () => {
           pricing: 100.0,
           availability: 'Available',
           date_created: new Date(),
+          service_image_url: 'https://someurl.com',
         },
         {
           service_id: 2,
@@ -63,6 +64,7 @@ describe('ServicesController', () => {
           pricing: 200.0,
           availability: 'Not available',
           date_created: new Date(),
+          service_image_url: 'https://someurl.com',
         },
       ];
       service.findAll.mockResolvedValue(result);
