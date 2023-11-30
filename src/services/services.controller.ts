@@ -9,12 +9,21 @@ import {
   UsePipes,
   ValidationPipe,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from '../utils/guards/jwt-auth.guard';
+import { LocalRequestGuard } from '../utils/guards/local-request.guard';
 
 @ApiTags('services')
 @Controller('services')
@@ -23,6 +32,8 @@ export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new service' })
   @ApiResponse({ status: 201, description: 'Service created successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -53,6 +64,8 @@ export class ServicesController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Service ID' })
   @ApiOperation({ summary: 'Update a service by ID' })
   @ApiResponse({ status: 200, description: 'Service updated successfully' })
@@ -64,6 +77,8 @@ export class ServicesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, LocalRequestGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Service ID' })
   @ApiOperation({ summary: 'Delete a service by ID' })
   @ApiResponse({ status: 200, description: 'Service deleted successfully' })
