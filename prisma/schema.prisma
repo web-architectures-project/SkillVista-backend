@@ -51,16 +51,17 @@ model ServiceCategory {
 }
 
 model Service {
-  service_id       Int             @id @default(autoincrement())
-  provider_id      Int
-  service_type_id  Int
-  service_category ServiceCategory @relation(fields: [service_type_id], references: [service_category_id])
-  description      String          @map("description")
-  pricing          Float           @map("pricing")
-  availability     String          @map("availability")
-  date_created     DateTime        @default(now()) @map("date_created")
-  provider         User            @relation("ProviderRelation", fields: [provider_id], references: [user_id])
-  Review           Review[]
+  service_id        Int             @id @default(autoincrement())
+  provider_id       Int
+  service_type_id   Int
+  service_category  ServiceCategory @relation(fields: [service_type_id], references: [service_category_id])
+  service_image_url String?
+  description       String          @map("description")
+  pricing           Float           @map("pricing")
+  availability      String          @map("availability")
+  date_created      DateTime        @default(now()) @map("date_created")
+  provider          User            @relation("ProviderRelation", fields: [provider_id], references: [user_id])
+  Review            Review[]
 }
 
 model Contact {
