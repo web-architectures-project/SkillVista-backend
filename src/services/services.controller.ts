@@ -10,6 +10,8 @@ import {
   ValidationPipe,
   Put,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 
 import { ServicesService } from './services.service';
@@ -17,6 +19,8 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -24,6 +28,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../utils/guards/jwt-auth.guard';
 import { LocalRequestGuard } from '../utils/guards/local-request.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('services')
 @Controller('services')
@@ -74,6 +79,26 @@ export class ServicesController {
   @ApiResponse({ status: 500, description: 'Internal server error' })
   update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
     return this.servicesService.update(+id, updateServiceDto);
+  }
+
+  @Post('image/:id')
+  @ApiResponse({ status: 404, description: 'Service not found.' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  updateImage(@Param('id') id: number, @UploadedFile() file) {
+    return this.servicesService.updateImage(id, file);
   }
 
   @Delete(':id')
