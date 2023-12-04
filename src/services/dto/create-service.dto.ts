@@ -9,6 +9,7 @@ import {
   Max,
   MaxLength,
   IsUrl,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateServiceDto {
@@ -47,8 +48,8 @@ export class CreateServiceDto {
   @Transform(({ value }) => new Date(value))
   date_created: Date;
 
-  @ApiProperty({ required: true })
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsUrl()
   @MaxLength(255)
   service_image_url: string;
