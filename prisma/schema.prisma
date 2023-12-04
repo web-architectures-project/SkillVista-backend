@@ -61,7 +61,7 @@ model Service {
   availability      String          @map("availability")
   date_created      DateTime        @default(now()) @map("date_created")
   provider          User            @relation("ProviderRelation", fields: [provider_id], references: [user_id])
-  Review            Review[]
+  Review            Review[]        
 }
 
 model Contact {
@@ -82,6 +82,6 @@ model Review {
   rating      Float
   comment     String?
   date_posted DateTime
-  service     Service  @relation(fields: [service_id], references: [service_id])
+  service     Service  @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
   reviewer    User     @relation(fields: [reviewer_id], references: [user_id])
 }
