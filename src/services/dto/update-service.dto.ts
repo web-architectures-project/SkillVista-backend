@@ -3,6 +3,7 @@ import {
   IsDate,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUrl,
   Matches,
@@ -45,8 +46,8 @@ export class UpdateServiceDto {
   @IsNotEmpty()
   date_created: Date;
 
-  @ApiProperty({ required: true })
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsUrl()
   @MaxLength(255)
   service_image_url: string;
