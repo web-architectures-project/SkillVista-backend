@@ -1,0 +1,14 @@
+{
+    "usernames": ["user1", "user2", "user3"],
+    "emails": ["user1@email.com", "user2@email.com", "user3@email.com"] ,
+    "passwords": ["pass1", "pass2", "pass3"],
+    "firstNames": ["John", "Jane", "Jim"],
+    "lastNames": ["Doe", "Smith", "Brown"],
+    "phoneNumbers": ["1234567890", "0987654321", "1122334455"],
+    "addresses": ["123 Main St", "456 Elm St", "789 Oak St"],
+    "cities": ["City1", "City2", "City3"],
+    "counties": ["County1", "County2", "County3"],
+    "eircodes": ["A1B2C3", "D4E5F6", "G7H8I9", "J1K2L3", "M4N5O6", "P7Q8R9"],
+    "userTypes": ["user", "service_provider"]
+  }
+  
