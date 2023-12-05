@@ -74,8 +74,12 @@ async function generateRandomUser() {
 }
 
 async function main() {
-  for (let i = 0; i < 100; i++) {
-    await generateRandomUser();
+  try {
+    for (let i = 0; i < 100; i++) {
+      await generateRandomUser();
+    }
+  } catch (error) {
+    main();
   }
 }
 
